@@ -1,22 +1,156 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Blazar Coder</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlazarCoder</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #0B0F1A, #111827);
+        color: white;
+    }
+
+    .hero {
+        height: 60vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background: radial-gradient(circle at right, #00D4FF22, transparent 60%);
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        margin: 0;
+    }
+
+    .hero p {
+        color: #00D4FF;
+        margin-top: 10px;
+        font-size: 1.2rem;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        transition: transform 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    h2 {
+        color: #00D4FF;
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: #cbd5e1;
+        line-height: 1.6;
+    }
+
+    a {
+        color: #00D4FF;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .apps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .app {
+        padding: 15px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid #00D4FF33;
+    }
+
+    footer {
+        text-align: center;
+        padding: 20px;
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+</style>
 </head>
-<body style="font-family: Arial; text-align: center; padding: 40px;">
 
-    <h1>Blazar Coder</h1>
-    <p>Building smart mobile applications</p>
+<body>
 
-    <h2>About</h2>
-    <p>Blazar Coder is an independent developer focused on AI-powered and utility mobile apps.</p>
+<!-- HERO -->
+.hero {
+    height: 60vh;
+    background: url('header_4096x2304.jpg') center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
-    <h2>Contact</h2>
-    <p>Email: admin@blazarcoder.com</p>
+<div class="container">
 
-    <h2>Legal</h2>
-    <p><a href="privacy.html">Privacy Policy</a></p>
+    <!-- ABOUT -->
+    <div class="card">
+        <h2>About</h2>
+        <p>
+            BlazarCoder is focused on building smart, AI-powered mobile applications 
+            and automation tools designed to simplify everyday life.
+        </p>
+    </div>
+
+    <!-- APPS -->
+    <div class="card">
+        <h2>Apps</h2>
+        <div class="apps">
+
+            <div class="app">
+                <strong>PhoneAgent</strong>
+                <p>Your phone. Finally obedient.</p>
+            </div>
+
+            <!-- Add more apps here later -->
+
+        </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="card">
+        <h2>Contact</h2>
+        <p>Email: <a href="mailto:admin@blazarcoder.com">admin@blazarcoder.com</a></p>
+    </div>
+
+    <!-- LEGAL -->
+    <div class="card">
+        <h2>Legal</h2>
+        <p><a href="privacy.html">Privacy Policy</a></p>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 BlazarCoder
+</footer>
 
 </body>
 </html>
