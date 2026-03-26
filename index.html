@@ -6,99 +6,13 @@
 <title>BlazarCoder</title>
 
 <style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', sans-serif;
-        background: linear-gradient(135deg, #0B0F1A, #111827);
-        color: white;
-    }
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0B0F1A, #111827);
+    color: white;
+}
 
-    .hero {
-        height: 60vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        background: radial-gradient(circle at right, #00D4FF22, transparent 60%);
-    }
-
-    .hero h1 {
-        font-size: 3rem;
-        margin: 0;
-    }
-
-    .hero p {
-        color: #00D4FF;
-        margin-top: 10px;
-        font-size: 1.2rem;
-    }
-
-    .container {
-        max-width: 900px;
-        margin: auto;
-        padding: 20px;
-    }
-
-    .card {
-        background: rgba(255,255,255,0.05);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
-        padding: 25px;
-        margin: 20px 0;
-        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-        transition: transform 0.3s;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-    }
-
-    h2 {
-        color: #00D4FF;
-        margin-bottom: 10px;
-    }
-
-    p {
-        color: #cbd5e1;
-        line-height: 1.6;
-    }
-
-    a {
-        color: #00D4FF;
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-
-    .apps {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-    }
-
-    .app {
-        padding: 15px;
-        border-radius: 10px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid #00D4FF33;
-    }
-
-    footer {
-        text-align: center;
-        padding: 20px;
-        color: #888;
-        font-size: 0.9rem;
-    }
-
-</style>
-</head>
-
-<body>
-
-<!-- HERO -->
 .hero {
     height: 60vh;
     background: url('header_4096x2304.jpg') center/cover no-repeat;
@@ -106,41 +20,75 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
+
+.hero h1 {
+    font-size: 3rem;
+    margin: 0;
+}
+
+.hero p {
+    color: #00D4FF;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+}
+
+.apps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.app {
+    padding: 15px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #00D4FF33;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ✅ HERO (THIS WAS MISSING) -->
+<section class="hero">
+    <h1>BlazarCoder</h1>
+    <p>Build. Automate. Innovate.</p>
+</section>
 
 <div class="container">
 
-    <!-- ABOUT -->
     <div class="card">
         <h2>About</h2>
         <p>
-            BlazarCoder is focused on building smart, AI-powered mobile applications 
-            and automation tools designed to simplify everyday life.
+            BlazarCoder builds smart AI-powered mobile apps and tools.
         </p>
     </div>
 
-    <!-- APPS -->
+    <!-- ✅ APPS (EMPTY CONTAINER) -->
     <div class="card">
         <h2>Apps</h2>
-        <div class="apps">
-
-            <div class="app">
-                <strong>PhoneAgent</strong>
-                <p>Your phone. Finally obedient.</p>
-            </div>
-
-            <!-- Add more apps here later -->
-
-        </div>
+        <div class="apps" id="appsContainer"></div>
     </div>
 
-    <!-- CONTACT -->
     <div class="card">
         <h2>Contact</h2>
         <p>Email: <a href="mailto:admin@blazarcoder.com">admin@blazarcoder.com</a></p>
     </div>
 
-    <!-- LEGAL -->
     <div class="card">
         <h2>Legal</h2>
         <p><a href="privacy.html">Privacy Policy</a></p>
@@ -148,9 +96,58 @@
 
 </div>
 
-<footer>
+<footer style="text-align:center; padding:20px; color:#888;">
     © 2026 BlazarCoder
 </footer>
+
+<!-- ✅ SCRIPT GOES HERE (VERY IMPORTANT) -->
+<script>
+const apps = [
+    { name: "PhoneAgent", desc: "Your phone. Finally obedient." },
+
+    { name: "Game 1", desc: "Fun and addictive gameplay." },
+    { name: "Game 2", desc: "Fast-paced action game." },
+    { name: "Game 3", desc: "Puzzle challenge experience." },
+    { name: "Game 4", desc: "Arcade style fun." },
+    { name: "Game 5", desc: "Classic gameplay reinvented." },
+
+    { name: "Game 6", desc: "Exciting levels." },
+    { name: "Game 7", desc: "Offline fun." },
+    { name: "Game 8", desc: "Simple gameplay." },
+    { name: "Game 9", desc: "Quick play." },
+    { name: "Game 10", desc: "Casual entertainment." },
+
+    { name: "Game 11", desc: "Strategy gameplay." },
+    { name: "Game 12", desc: "Brain puzzles." },
+    { name: "Game 13", desc: "Relaxing game." },
+    { name: "Game 14", desc: "Endless fun." },
+    { name: "Game 15", desc: "Lightweight." },
+
+    { name: "Game 16", desc: "Fast reflex." },
+    { name: "Game 17", desc: "Arcade fun." },
+    { name: "Game 18", desc: "Minimal design." },
+    { name: "Game 19", desc: "Simple controls." },
+    { name: "Game 20", desc: "Quick sessions." },
+
+    { name: "Game 21", desc: "Classic feel." },
+    { name: "Game 22", desc: "All ages." },
+    { name: "Game 23", desc: "Addictive." },
+    { name: "Game 24", desc: "Smooth gameplay." },
+    { name: "Game 25", desc: "Runner style." },
+
+    { name: "Game 26", desc: "Challenging." },
+    { name: "Game 27", desc: "Casual relaxing." }
+];
+
+const container = document.getElementById("appsContainer");
+
+apps.forEach(app => {
+    const div = document.createElement("div");
+    div.className = "app";
+    div.innerHTML = `<strong>${app.name}</strong><p>${app.desc}</p>`;
+    container.appendChild(div);
+});
+</script>
 
 </body>
 </html>
