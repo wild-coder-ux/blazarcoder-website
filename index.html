@@ -81,10 +81,30 @@ body {
     background: rgba(255,255,255,0.03);
     border: 1px solid #00D4FF33;
 }
+.hero {
+    height: 50vh; /* reduced */
+    background: 
+        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url('header_4096x2304.png') center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.container {
+    max-width: 900px;
+    margin: 40px auto; /* THIS FIXES OVERLAP */
+    padding: 20px;
+}    
 </style>
 </head>
 
 <body>
+<!-- ✅ HERO (THIS WAS MISSING) -->
+<section class="hero">
+    <h1>BlazarCoder</h1>
+    <p>Build. Automate. Innovate.</p>
+</section>    
 
 
 <div class="container">
