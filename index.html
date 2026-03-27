@@ -127,40 +127,18 @@ body {
 <script>
 const apps = [
     {
-        name: "27 Offline Games",
-        desc: "Play 27 fun offline games anytime.",
-        details: "Includes puzzle, arcade, and casual games without internet."
-    }
-];
-
-const container = document.getElementById("appsContainer");
-
-apps.forEach(app => {
-    const div = document.createElement("div");
-    div.className = "app-card";
-
-    div.innerHTML = `
-        <strong>${app.name}</strong>
-        <p>${app.desc}</p>
-        <div class="app-details">${app.details}</div>
-    `;
-
-    div.addEventListener("click", () => {
-        div.classList.toggle("active");
-    });
-
-    container.appendChild(div);
-});
-</script>
-<script>
-const apps = [
-    {
-        name: "PhoneAgent",
-        desc: "Your phone. Finally obedient.",
-        details: "Automate tasks, control your phone smarter, and simplify daily workflows."
+        name: "GeoSpeech",
+        category: "Education",
+        status: "In Review",
+        icon: "geospeech.png", // add when ready
+        desc: "Speak places — see the world instantly.",
+        details: "Voice-powered geography app. Speak places, see them on map, get distances and facts. Works worldwide. No login, no tracking."
     },
     {
         name: "Offline Games Pack",
+        category: "Games",
+        status: "Live",
+        icon: "",
         desc: "27 fun offline games in one app.",
         details: "Includes puzzle, arcade, and casual games designed for quick and fun gameplay without internet."
     }
@@ -173,9 +151,60 @@ apps.forEach(app => {
     div.className = "app-card";
 
     div.innerHTML = `
-        <strong>${app.name}</strong>
-        <p>${app.desc}</p>
-        <div class="app-details">${app.details}</div>
+        <div style="display:flex; align-items:center; gap:15px;">
+            
+            <!-- ICON -->
+            <div style="
+                width:60px;
+                height:60px;
+                border-radius:15px;
+                background:${app.icon ? `url(${app.icon}) center/cover` : '#00D4FF22'};
+                border:1px solid #00D4FF33;
+            "></div>
+
+            <!-- TEXT -->
+            <div style="flex:1;">
+                <strong style="font-size:18px;">${app.name}</strong>
+                <div style="font-size:13px; color:#94a3b8;">
+                    ${app.category}
+                </div>
+
+                <!-- STATUS -->
+                <div style="margin-top:5px;">
+                    <span style="
+                        font-size:12px;
+                        padding:4px 8px;
+                        border-radius:6px;
+                        background:${getStatusColor(app.status)};
+                        color:white;
+                    ">
+                        ${app.status}
+                    </span>
+                </div>
+
+                <p style="margin:6px 0 0; font-size:14px;">
+                    ${app.desc}
+                </p>
+            </div>
+        </div>
+
+        <div class="app-details" style="margin-top:10px;">
+            ${app.details}
+
+            <div style="margin-top:10px;">
+                <button style="
+                    padding:8px 14px;
+                    border:none;
+                    border-radius:8px;
+                    background:#00D4FF;
+                    color:black;
+                    cursor:pointer;
+                    opacity:0.6;
+                ">
+                    Install (Coming Soon)
+                </button>
+            </div>
+        </div>
     `;
 
     div.addEventListener("click", () => {
@@ -184,6 +213,12 @@ apps.forEach(app => {
 
     container.appendChild(div);
 });
+
+function getStatusColor(status) {
+    if (status === "Live") return "#22c55e";
+    if (status === "In Review") return "#f59e0b";
+    return "#64748b";
+}
 </script>
 </body>
 </html>
