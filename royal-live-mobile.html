@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>Royal Visage Live</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<style>
+:root {
+  --gold: #c9952a; --gold2: #f0c040;
+  --deep: #0e0700; --parchment: #f5e9ca;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width:100%; height:100%; overflow:hidden; background:#000; font-family:'EB Garamond',serif; }
+
+#video { position:fixed; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; }
+#canvas { position:fixed; inset:0; width:100%; height:100%; z-index:2; pointer-events:none; }
+
+/* START SCREEN */
+#start-screen {
+  position:fixed; inset:0; z-index:50;
+  background:radial-gradient(ellipse at 50% 40%, #1e0f00 0%, #000 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:1.2rem; padding:2rem; text-align:center;
+}
+.crown-anim { font-size:4.5rem; display:block; animation:crownFloat 2s ease-in-out infinite alternate; }
+@keyframes crownFloat {
+  from { filter:drop-shadow(0 0 12px var(--gold)); transform:translateY(0); }
+  to   { filter:drop-shadow(0 0 36px var(--gold2)); transform:translateY(-10px); }
+}
+#start-screen h1 {
+  font-family:'Cinzel Decorative',serif; font-size:clamp(1.6rem,6vw,2.4rem); font-weight:900;
+  background:linear-gradient(135deg,#f0c040,#c9952a,#f0c040);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+#start-screen p { color:rgba(245,233,202,0.5); font-style:italic; font-size:0.95rem; max-width:300px; line-height:1.6; }
+#status-msg { font-size:0.82rem; color:var(--gold); font-style:italic; min-height:1.2rem; }
+.load-bar-wrap { width:220px; height:3px; background:rgba(201,149,42,0.15); border-radius:2px; overflow:hidden; }
+.load-bar { height:100%; background:linear-gradient(90deg,var(--gold),var(--gold2)); width:0; transition:width 0.4s; border-radius:2px; }
+#start-btn {
+  padding:0.95rem 2.2rem; font-family:'Cinzel Decorative',serif; font-size:0.85rem;
+  letter-spacing:0.12em; text-transform:uppercase;
+  background:linear-gradient(135deg,#7a5010,#c9952a,#f0c040,#c9952a,#7a5010);
+  color:#0e0700; border:none; border-radius:4px; cursor:pointer;
+  box-shadow:0 4px 24px rgba(201,149,42,0.4); display:none;
+}
+#start-btn:active { transform:scale(0.96); }
+
+/* TOP BAR */
+#top-bar {
+  position:fixed; top:0; left:0; right:0; z-index:30; display:none;
+  align-items:center; justify-content:space-between;
+  padding:max(env(safe-area-inset-top),10px) 14px 8px;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.65) 0%,transparent 100%);
+}
+.app-title { font-family:'Cinzel Decorative',serif; font-size:0.95rem; color:var(--gold2); text-shadow:0 2px 8px rgba(0,0,0,0.9); }
+.top-btns { display:flex; gap:8px; align-items:center; }
+#face-badge { font-size:0.65rem; font-family:'Cinzel Decorative',serif; color:rgba(240,192,64,0.7); letter-spacing:0.05em; }
+.icon-btn {
+  width:40px; height:40px; border-radius:50%;
+  background:rgba(0,0,0,0.55); border:1px solid rgba(201,149,42,0.4);
+  color:var(--gold); font-size:1.1rem; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; backdrop-filter:blur(4px); -webkit-tap-highlight-color:transparent;
+}
+.icon-btn:active { background:rgba(201,149,42,0.25); }
+
+/* BOTTOM BAR */
+#bottom-bar {
+  position:fixed; bottom:0; left:0; right:0; z-index:30; display:none;
+  flex-direction:column; align-items:center;
+  padding:0 10px max(env(safe-area-inset-bottom),14px) 10px; gap:10px;
+  background:linear-gradient(to top,rgba(0,0,0,0.8) 0%,transparent 100%);
+}
+#style-strip {
+  display:flex; gap:8px; overflow-x:auto; scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch; width:100%; padding:4px 4px 6px; scrollbar-width:none;
+}
+#style-strip::-webkit-scrollbar { display:none; }
+.style-pill {
+  scroll-snap-align:center; flex-shrink:0;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:7px 10px 5px; border-radius:22px;
+  border:1.5px solid rgba(201,149,42,0.3); background:rgba(0,0,0,0.55);
+  cursor:pointer; backdrop-filter:blur(8px); min-width:66px;
+  -webkit-tap-highlight-color:transparent; transition:all 0.2s;
+}
+.style-pill.active { border-color:var(--gold2); background:rgba(201,149,42,0.22); box-shadow:0 0 14px rgba(240,192,64,0.3); }
+.style-pill:active { transform:scale(0.92); }
+.pill-icon { font-size:1.55rem; line-height:1; }
+.pill-name { font-family:'Cinzel Decorative',serif; font-size:0.38rem; color:var(--gold); text-align:center; line-height:1.3; white-space:nowrap; }
+.style-pill.active .pill-name { color:var(--gold2); }
+
+.shutter-row { display:flex; align-items:center; justify-content:space-between; width:100%; max-width:320px; }
+.side-ctrl {
+  width:50px; height:50px; border-radius:50%;
+  background:rgba(0,0,0,0.55); border:1px solid rgba(201,149,42,0.35);
+  color:var(--gold); font-size:1.4rem; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.side-ctrl:active { background:rgba(201,149,42,0.2); }
+#shutter-btn {
+  width:72px; height:72px; border-radius:50%;
+  background:transparent; border:4px solid rgba(255,255,255,0.88);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#shutter-btn::after { content:''; width:54px; height:54px; border-radius:50%; background:rgba(255,255,255,0.92); transition:transform 0.1s; }
+#shutter-btn:active::after { transform:scale(0.84); }
+
+/* FLASH */
+#flash { position:fixed; inset:0; background:white; z-index:60; pointer-events:none; opacity:0; transition:opacity 0.08s; }
+#flash.pop { opacity:1; }
+
+/* PREVIEW */
+#preview-sheet {
+  position:fixed; inset:0; z-index:70; background:rgba(0,0,0,0.94);
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  gap:1.1rem; padding:1.5rem;
+}
+.preview-title { font-family:'Cinzel Decorative',serif; font-size:0.95rem; color:var(--gold2); letter-spacing:0.1em; }
+#snap-canvas { width:100%; max-width:360px; max-height:54vh; object-fit:contain; border-radius:4px; box-shadow:0 0 0 2px var(--gold),0 12px 40px rgba(0,0,0,0.7); }
+.preview-btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+.p-btn { padding:0.65rem 1.3rem; font-family:'Cinzel Decorative',serif; font-size:0.68rem; letter-spacing:0.1em; border-radius:4px; cursor:pointer; text-transform:uppercase; -webkit-tap-highlight-color:transparent; }
+.p-btn.save { background:linear-gradient(135deg,#7a5010,#c9952a,#f0c040); color:#0e0700; border:none; box-shadow:0 4px 16px rgba(201,149,42,0.35); }
+.p-btn.retake { background:transparent; border:1px solid rgba(201,149,42,0.4); color:var(--gold); }
+.p-btn:active { transform:scale(0.94); }
+
+/* TOAST */
+#toast {
+  position:fixed; bottom:130px; left:50%; z-index:40;
+  transform:translateX(-50%) translateY(20px);
+  background:rgba(14,7,0,0.9); border:1px solid var(--gold); border-radius:24px;
+  padding:0.5rem 1.2rem; font-family:'Cinzel Decorative',serif; font-size:0.7rem;
+  color:var(--gold2); letter-spacing:0.08em; opacity:0; transition:all 0.3s;
+  pointer-events:none; backdrop-filter:blur(8px); white-space:nowrap;
+}
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<video id="video" autoplay playsinline muted></video>
+<canvas id="canvas"></canvas>
+<div id="flash"></div>
+
+<div id="start-screen">
+  <span class="crown-anim">♛</span>
+  <h1>Royal Visage</h1>
+  <p>Crowns & regalia track your real face using AI face detection.</p>
+  <div class="load-bar-wrap"><div class="load-bar" id="load-bar"></div></div>
+  <div id="status-msg">Loading face detection…</div>
+  <button id="start-btn">♛ &nbsp;Open Royal Camera</button>
+</div>
+
+<div id="top-bar">
+  <div class="app-title">♛ Royal Visage</div>
+  <div class="top-btns">
+    <div id="face-badge">finding face…</div>
+    <div class="icon-btn" id="flip-btn">🔄</div>
+  </div>
+</div>
+
+<div id="bottom-bar">
+  <div id="style-strip"></div>
+  <div class="shutter-row">
+    <div class="side-ctrl" id="prev-btn">‹</div>
+    <div id="shutter-btn"></div>
+    <div class="side-ctrl" id="next-btn">›</div>
+  </div>
+</div>
+
+<div id="preview-sheet">
+  <div class="preview-title">Your Royal Portrait</div>
+  <canvas id="snap-canvas"></canvas>
+  <div class="preview-btns">
+    <button class="p-btn save" id="save-btn">⬇ Save Portrait</button>
+    <button class="p-btn retake" id="retake-btn">✕ Retake</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ─── STYLES ─── */
+const STYLES = [
+  { id:'medieval',    icon:'⚔️',  name:'Medieval\nKing',      label:'MEDIEVAL KING',      draw:drawMedieval },
+  { id:'pharaoh',     icon:'𓂀',  name:'Pharaoh',              label:'EGYPTIAN PHARAOH',   draw:drawPharaoh },
+  { id:'renaissance', icon:'🌹',  name:'Renaissance\nQueen',   label:'RENAISSANCE QUEEN',  draw:drawRenaissance },
+  { id:'viking',      icon:'🪓',  name:'Viking Jarl',          label:'VIKING JARL',        draw:drawViking },
+  { id:'emperor',     icon:'🐉',  name:'Dragon\nEmperor',      label:'DRAGON EMPEROR',     draw:drawEmperor },
+  { id:'greek',       icon:'🏛️', name:'Greek Deity',           label:'GREEK DEITY',        draw:drawGreek },
+  { id:'aztec',       icon:'☀️',  name:'Aztec Ruler',          label:'AZTEC TLATOANI',     draw:drawAztec },
+  { id:'mughal',      icon:'💎',  name:'Mughal\nEmperor',      label:'MUGHAL EMPEROR',     draw:drawMughal },
+];
+
+/* ─── STATE ─── */
+let styleIdx=0, facingMode='user', stream=null, animId=null;
+let detections=[], lastDetectTime=0;
+const DETECT_INTERVAL=120;
+
+const video=document.getElementById('video');
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+
+/* ─── BUILD STRIP ─── */
+const strip=document.getElementById('style-strip');
+STYLES.forEach((s,i)=>{
+  const p=document.createElement('div');
+  p.className='style-pill'+(i===0?' active':'');
+  p.innerHTML=`<span class="pill-icon">${s.icon}</span><span class="pill-name">${s.name}</span>`;
+  p.addEventListener('click',()=>setStyle(i));
+  strip.appendChild(p);
+});
+function setStyle(i){
+  styleIdx=((i%STYLES.length)+STYLES.length)%STYLES.length;
+  strip.querySelectorAll('.style-pill').forEach((p,j)=>p.classList.toggle('active',j===styleIdx));
+  strip.querySelectorAll('.style-pill')[styleIdx]?.scrollIntoView({behavior:'smooth',inline:'center'});
+  showToast(STYLES[styleIdx].icon+' '+STYLES[styleIdx].label);
+}
+document.getElementById('prev-btn').addEventListener('click',()=>setStyle(styleIdx-1));
+document.getElementById('next-btn').addEventListener('click',()=>setStyle(styleIdx+1));
+
+/* ─── LOAD MODELS ─── */
+const MODEL_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+async function loadModels(){
+  const statusEl=document.getElementById('status-msg');
+  const loadBar=document.getElementById('load-bar');
+  const startBtn=document.getElementById('start-btn');
+  try{
+    statusEl.textContent='Loading face detector…'; loadBar.style.width='20%';
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+    loadBar.style.width='60%'; statusEl.textContent='Loading landmark model…';
+    await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
+    loadBar.style.width='100%'; statusEl.textContent='Ready ♛';
+    setTimeout(()=>{ startBtn.style.display='block'; statusEl.textContent=''; },400);
+  }catch(e){
+    statusEl.textContent='Model load failed — check your connection';
+    console.error(e);
+  }
+}
+loadModels();
+
+/* ─── CAMERA ─── */
+document.getElementById('start-btn').addEventListener('click',startCamera);
+async function startCamera(){
+  try{
+    if(stream) stream.getTracks().forEach(t=>t.stop());
+    stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode, width:{ideal:1280}, height:{ideal:720}}, audio:false
+    });
+    video.srcObject=stream; await video.play();
+    document.getElementById('start-screen').style.display='none';
+    document.getElementById('top-bar').style.display='flex';
+    document.getElementById('bottom-bar').style.display='flex';
+    resizeCanvas();
+    window.addEventListener('resize',resizeCanvas);
+    startLoop();
+  }catch(e){ alert('Camera access denied. Allow camera permissions and try again.'); }
+}
+function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+document.getElementById('flip-btn').addEventListener('click',async()=>{
+  facingMode=facingMode==='user'?'environment':'user';
+  video.style.transform=facingMode==='user'?'scaleX(-1)':'none';
+  await startCamera();
+});
+
+/* ─── RENDER LOOP ─── */
+function startLoop(){
+  if(animId) cancelAnimationFrame(animId);
+  async function loop(ts){
+    if(ts-lastDetectTime>DETECT_INTERVAL && video.readyState>=2){
+      lastDetectTime=ts; detectFaces();
+    }
+    renderFrame();
+    animId=requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+async function detectFaces(){
+  try{
+    const results=await faceapi
+      .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:0.35}))
+      .withFaceLandmarks(true);
+
+    const sx=canvas.width/video.videoWidth;
+    const sy=canvas.height/video.videoHeight;
+    const mirror=facingMode==='user';
+
+    detections=results.map(r=>{
+      const lm=r.landmarks.positions.map(p=>({
+        x: mirror ? canvas.width - p.x*sx : p.x*sx,
+        y: p.y*sy
+      }));
+      return lm;
+    });
+
+    document.getElementById('face-badge').textContent=
+      detections.length===0?'no face detected':
+      detections.length===1?'1 face ✓':detections.length+' faces ✓';
+  }catch(e){ /* silent */ }
+}
+
+function renderFrame(){
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if(!video.videoWidth) return;
+  ctx.save();
+  if(facingMode==='user'){ ctx.translate(W,0); ctx.scale(-1,1); }
+  ctx.drawImage(video,0,0,W,H);
+  ctx.restore();
+  const style=STYLES[styleIdx];
+  detections.forEach(lm=>style.draw(ctx,lm,W,H));
+  // Label
+  const g=ctx.createLinearGradient(0,H-55,0,H);
+  g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,0.7)');
+  ctx.fillStyle=g; ctx.fillRect(0,H-55,W,55);
+  ctx.fillStyle='rgba(240,192,64,0.88)';
+  ctx.font=`bold ${Math.max(13,W*0.03)}px Georgia`;
+  ctx.textAlign='center'; ctx.fillText(style.label,W/2,H-14);
+}
+
+/* ─── SHUTTER ─── */
+document.getElementById('shutter-btn').addEventListener('click',()=>{
+  document.getElementById('flash').classList.add('pop');
+  setTimeout(()=>document.getElementById('flash').classList.remove('pop'),160);
+  const sc=document.getElementById('snap-canvas');
+  sc.width=canvas.width; sc.height=canvas.height;
+  sc.getContext('2d').drawImage(canvas,0,0);
+  document.getElementById('preview-sheet').style.display='flex';
+});
+document.getElementById('save-btn').addEventListener('click',()=>{
+  const a=document.createElement('a');
+  a.href=document.getElementById('snap-canvas').toDataURL('image/jpeg',0.92);
+  a.download=`royal_${STYLES[styleIdx].id}_${Date.now()}.jpg`;
+  a.click(); showToast('Portrait saved ♛');
+});
+document.getElementById('retake-btn').addEventListener('click',()=>{
+  document.getElementById('preview-sheet').style.display='none';
+});
+
+/* ─── TOAST ─── */
+let toastTmr;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTmr); toastTmr=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+/* ═══════════════════════════════════════════════════════
+   LANDMARK REFERENCE:
+   0-16  = jaw line (0=left ear side, 16=right ear side)
+   17-26 = eyebrows (17-21 left, 22-26 right)
+   27-35 = nose bridge + tip (27=top, 30=tip)
+   36-41 = left eye, 42-47 = right eye
+   48-67 = mouth
+   We use: brow top ≈ lm[19] & lm[24], eye center, chin=lm[8]
+═══════════════════════════════════════════════════════ */
+
+// Helpers
+const mid=(a,b)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2});
+const browMid=lm=>mid(lm[19],lm[24]);
+const eyeMid=lm=>mid(mid(lm[36],lm[39]),mid(lm[42],lm[45]));
+const fw=lm=>Math.abs(lm[16].x-lm[0].x);  // face width jaw to jaw
+
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+
+/* ─── MEDIEVAL KING ─── */
+function drawMedieval(ctx,lm,W,H){
+  const f=fw(lm), s=f/160;
+  const bm=browMid(lm), cx=bm.x, cy=bm.y;
+  ctx.save();
+  // Band
+  ctx.fillStyle='#8b6914'; rr(ctx,cx-72*s,cy-4*s,144*s,20*s,4*s); ctx.fill();
+  ctx.strokeStyle='#f0c040'; ctx.lineWidth=1.5*s; ctx.stroke();
+  // Spikes
+  [[-50,36],[-25,52],[0,64],[25,52],[50,36]].forEach(([ox,h])=>{
+    ctx.fillStyle='#c9952a';
+    ctx.beginPath(); ctx.moveTo(cx+ox*s-11*s,cy-2*s); ctx.lineTo(cx+ox*s,cy-h*s); ctx.lineTo(cx+ox*s+11*s,cy-2*s); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#f0c040'; ctx.lineWidth=1.2*s; ctx.stroke();
+  });
+  // Jewels
+  [['#cc0000',-48],['#004488',-24],['#f0c040',0],['#006620',24],['#cc0000',48]].forEach(([c,ox])=>{
+    ctx.fillStyle=c; ctx.beginPath(); ctx.arc(cx+ox*s,cy+7*s,5.5*s,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#f0c040'; ctx.lineWidth=1*s; ctx.stroke();
+  });
+  // Chain drops
+  ctx.strokeStyle='rgba(180,140,40,0.65)'; ctx.lineWidth=2*s;
+  [-1,1].forEach(d=>{
+    for(let i=0;i<3;i++){
+      const ox=(68+i*8)*s*d;
+      ctx.beginPath(); ctx.moveTo(cx+ox,cy+16*s); ctx.quadraticCurveTo(cx+ox+d*8*s,cy+50*s,cx+ox+d*5*s,cy+85*s); ctx.stroke();
+    }
+  });
+  ctx.restore();
+}
+
+/* ─── PHARAOH ─── */
+function drawPharaoh(ctx,lm,W,H){
+  const f=fw(lm), s=f/160;
+  const bm=browMid(lm), cx=bm.x, cy=bm.y;
+  ctx.save();
+  // Nemes top
+  ctx.fillStyle='#d4a017';
+  ctx.beginPath(); ctx.moveTo(cx-68*s,cy+14*s); ctx.lineTo(cx-44*s,cy-68*s); ctx.lineTo(cx,cy-86*s); ctx.lineTo(cx+44*s,cy-68*s); ctx.lineTo(cx+68*s,cy+14*s); ctx.closePath(); ctx.fill();
+  // Blue stripes on nemes
+  for(let i=0;i<5;i++){
+    ctx.fillStyle=`rgba(0,0,${60+i*20},0.45)`;
+    ctx.beginPath(); ctx.moveTo(cx-68*s+i*27*s,cy+14*s); ctx.lineTo(cx-44*s+i*21*s,cy-68*s); ctx.lineTo(cx-44*s+(i+1)*21*s,cy-68*s); ctx.lineTo(cx-68*s+(i+1)*27*s,cy+14*s); ctx.closePath(); ctx.fill();
+  }
+  ctx.strokeStyle='#f0c040'; ctx.lineWidth=2*s;
+  ctx.beginPath(); ctx.moveTo(cx-68*s,cy+14*s); ctx.lineTo(cx-44*s,cy-68*s); ctx.lineTo(cx,cy-86*s); ctx.lineTo(cx+44*s,cy-68*s); ctx.lineTo(cx+68*s,cy+14*s); ctx.stroke();
+  // Side lappets
+  ctx.fillStyle='rgba(212,160,23,0.72)';
+  [-1,1].forEach(d=>{
+    ctx.beginPath(); ctx.moveTo(cx+d*66*s,cy+14*s); ctx.quadraticCurveTo(cx+d*92*s,cy+58*s,cx+d*76*s,cy+118*s);
+    ctx.lineTo(cx+d*56*s,cy+118*s); ctx.quadraticCurveTo(cx+d*72*s,cy+54*s,cx+d*48*s,cy+14*s); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#f0c040'; ctx.lineWidth=1.5*s; ctx.stroke();
+  });
+  // Uraeus
+  ctx.fillStyle='#f0c040'; ctx.beginPath(); ctx.arc(cx,cy-88*s,11*s,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#cc2200'; ctx.beginPath(); ctx.arc(cx,cy-88*s,6*s,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#f0c040'; ctx.lineWidth=1.5*s; ctx.stroke();
+  // Eye of Horus on cheeks
+  const ec=eyeMid(lm);
+  ctx.font=`${22*s}px serif`; ctx.fillStyle='rgba(0,20,180,0.8)'; ctx.textAlign='center';
+  ctx.fillText('𓂀',lm[0].x-10*s,ec.y+6*s); ctx.fillText('𓂀',lm[16].x+10*s,ec.y+6*s);
+  ctx.restore();
+}
+
+/* ─── RENAISSANCE QUEEN ─── */
+function drawRenaissance(ctx,lm,W,H){
+  const f=fw(lm), s=f/160;
+  const bm=browMid(lm), cx=bm.x, cy=bm.y;
+  ctx.save();
+  // Tiara arches
+  [[-2,16],[-1,30],[0,44],[1,30],[2,16]].forEach(([i,h])=>{
+    const ox=i*22*s;
+    ctx.fillStyle=i===0?'rgba(210,170,220,0.92)':'rgba(185,145,200,0.85)';
+    ctx.strokeStyle='#d8a8e8'; ctx.lineWidth=1.5*s;
+    ctx.beginPath(); ctx.moveTo(cx+ox-11*s,cy+2*s); ctx.lineTo(cx+ox,cy-h*s); ctx.lineTo(cx+ox+11*s,cy+2*s); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle=i===0?'#9900ee':(Math.abs(i)===1?'#ee0044':'#ffffff');
+    ctx.beginPath(); ctx.arc(cx+ox,cy-h*s,5*s,0,Math.PI*2); ctx.fill();
+  });
+  // Pearl band
+  for(let i=-7;i<=7;i++){
+    ctx.fillStyle=i%2===0?'#f8f0ff':'#f0d080';
+    ctx.beginPath(); ctx.arc(cx+i*12*s,cy+4*s,5.5*s,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#c8a0d0'; ctx.lineWidth=1*s; ctx.stroke();
+  }
+  // Ruff collar
+  const neckY=lm[8].y+18*s;
+  for(let i=-5;i<=5;i++){
+    ctx.fillStyle=`rgba(255,255,255,${0.11+0.01*Math.abs(i)})`;
+    ctx.strokeStyle='rgba(255,255,255,0.28)'; ctx.lineWidth=1*s;
+    ctx.beginPath(); ctx.ellipse(cx+i*20*s,neckY,13*s,19*s,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* ─── VIKING JARL ─── */
+function drawViking(ctx,lm,W,H){
+  const f=fw(lm), s=f/160;
+  const bm=browMid(lm), cx=bm.x, cy=bm.y-4*s;
+  const nose=lm[30];
+  ctx.save();
+  // Helm dome
+  ctx.fillStyle='#4a70a8';
+  ctx.beginPath(); ctx.ellipse(cx,cy-16*s,66*s,50*s,0,Math.PI,0); ctx.fill();
+  ctx.strokeStyle='#80b0e0'; ctx.lineWidth=2*s;
+  ctx.beginPath(); ctx.ellipse(cx,cy-16*s,66*s,50*s,0,Math.PI,0); ctx.stroke();
+  // Brow band
+  ctx.fillStyle='#305890'; rr(ctx,cx-70*s,cy+10*s,140*s,17*s,3*s); ctx.fill();
+  ctx.strokeStyle='#80b0e0'; ctx.lineWidth=1.5*s; ctx.stroke();
+  // Rivets
+  for(let i=-3;i<=3;i++){ ctx.fillStyle='#a0c0e0'; ctx.beginPath(); ctx.arc(cx+i*20*s,cy+18*s,3*s,0,Math.PI*2); ctx.fill(); }
+  // Nose guard
+  ctx.fillStyle='#3d6090';
+  ctx.beginPath(); ctx.moveTo(cx-8*s,cy+10*s); ctx.lineTo(cx+8*s,cy+10*s); ctx.lineTo(cx+5*s,nose.y+8*s); ctx.lineTo(cx-5*s,nose.y+8*s); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle='#80b0e0'; ctx.lineWidth=1*s; ctx.stroke();
+  // Horns
+  ctx.strokeStyle='#c8daf0'; ctx.lineWidth=6*s; ctx.lineCap='round';
+  [-1,1].forEach(d=>{
+    ctx.beginPath(); ctx.moveTo(cx+d*64*s,cy-22*s); ctx.quadraticCurveTo(cx+d*108*s,cy-68*s,cx+d*94*s,cy-116*s); ctx.stroke();
+    ctx.fillStyle='#e0f0ff'; ctx.beginPath(); ctx.arc(cx+d*94*s,cy-116*s,7*s,0,Math.PI*2); ctx.fill();
+  });
+  // Cheek guards
+  ctx.fillStyle='rgba(74,112,168,0.5)';
+  [-1,1].forEach(d=>{
+    ctx.beginPath(); ctx.moveTo(cx+d*64*s,cy+12*s); ctx.quadraticCurveTo(cx+d*80*s,cy+50*s,cx+d*58*s,cy+92*s);
+    ctx.lineTo(cx+d*42*s,cy+92*s); ctx.quadraticCurveTo(cx+d*60*s,cy+48*s,cx+d*48*s,cy+12*s); ctx.closePath(); ctx.fill();
+  });
+  ctx.restore();
+}
+
+/* ─── DRAGON EMPEROR ─── */
+function drawEmperor(ctx,lm,W,H){
+  const f=fw(lm), s=f/160;
+  const bm=browMid(lm), cx=bm.x, cy=bm.y;
+  ctx.save();
+  // Crown top board
+  ctx.fillStyle='#8b0000'; rr(ctx,cx-76*s,cy-62*s,152*s,16*s,3*s); ctx.fill();
+  ctx.strokeStyle='#f0c040'; ctx.lineWidth=2*s; ctx.stroke();
+  // Crown body
+  ctx.fillStyle='#aa1010'; rr(ctx,cx-62*s,cy-46*s,124*s,48*s,4*s); ctx.fill();
+  ctx.strokeStyle='#f0c040'; ctx.lineWidth=2*s; ctx.stroke();
+  // Dragon character
+  ctx.font=`bold ${38*s}px serif`; ctx.fillStyle='#f0c040'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('龍',cx,cy-24*s);
+  // Jade jewels
+  [-38,0,38].forEach(ox=>{ ctx.fillStyle='#20c060'; ctx.beginPath(); ctx.arc(cx+ox*s,cy-6*s,7*s,0,Math.PI*2); ctx.fill(); ctx.strokeStyle='#f0c040'; ctx.lineWidth=1.5*s; ctx.stroke(); });
+  // Tassels
+  ctx.strokeStyle='#cc2020'; ctx.lineWidth=3*s; ctx.lineCap='round';
+  for(let i=-3;i<=3;i++){ ctx.beginPath(); ctx.moveTo(cx+i*18*s,cy+2*s); ctx.lineTo(cx+i*18*s,cy+42*s+Math.abs(i)*4*s); ctx.stroke(); ctx.fillStyle='#f0c040'; ctx.beginPath(); ctx.arc(cx+i*18*s,cy+44*s+Math.abs(i)*4*s,4*s,0,Math.PI*2); ctx.fill(); }
+  // Mandarin collar
+  const ny=lm[8].y+10*s;
+  ctx.fillStyle='rgba(140,0,0,0.55)'; rr(ctx,cx-48*s,ny,96*s,28*s,6*s); ctx.fill();
+  ctx.strokeStyle='#f0c040'; ctx.lineWidth=2*s; ctx.stroke();
+  ctx.restore();
+}
+
+/* ─── GREEK DEITY ─── */
+function drawGreek(ctx,lm,W,H){
+  const f=fw(lm), s=f/160;
+  const bm=browMid(lm), cx=bm.x, cy=bm.y-2*s;
+  ctx.save();
+  // Headband
+  ctx.fillStyle='rgba(255,255,210,0.22)'; rr(ctx,cx-70*s,cy,140*s,13*s,6*s); ctx.fill();
+  ctx.strokeStyle='rgba(200,200,140,0.45)'; ctx.lineWidth=1*s; ctx.stroke();
+  // Laurel wreath
+  const leafCols=['#4a8c20','#5ea828','#72c030','#3a7015'];
+  const R=66*s;
+  for(let i=0;i<18;i++){
+    const a=Math.PI+(i/17)*Math.PI;
+    const lx=cx+Math.cos(a)*R, ly=cy+Math.sin(a)*R-4*s;
+    ctx.save(); ctx.translate(lx,ly); ctx.rotate(a+Math.PI/2);
+    ctx.fillStyle=leafCols[i%leafCols.length];
+    ctx.beginPath(); ctx.ellipse(0,0,14*s,5.5*s,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+  // Berries
+  for(let i=2;i<16;i+=4){
+    const a=Math.PI+(i/17)*Math.PI;
+    ctx.fillStyle='#8b0000'; ctx.beginPath(); ctx.arc(cx+Math.cos(a)*(R-10*s),cy+Math.sin(a)*(R-10*s)-4*s,4*s,0,Math.PI*2); ctx.fill();
+  }
+  // Knot
+  ctx.fillStyle='#c8b400'; ctx.beginPath(); ctx.arc(cx,cy-R+4*s,8*s,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#f0e050'; ctx.lineWidth=1.5*s; ctx.stroke();
+  // Ribbons
+  ctx.strokeStyle='rgba(200,190,100,0.5)'; ctx.lineWidth=3*s; ctx.lineCap='round';
+  [-1,1].forEach(d=>{ ctx.beginPath(); ctx.moveTo(cx+d*64*s,cy+8*s); ctx.quadraticCurveTo(cx+d*84*s,cy+42*s,cx+d*70*s,cy+92*s); ctx.stroke(); });
+  ctx.restore();
+}
+
+/* ─── AZTEC TLATOANI ─── */
+function drawAztec(ctx,lm,W,H){
+  const f=fw(lm), s=f/160;
+  const bm=browMid(lm), cx=bm.x, cy=bm.y;
+  ctx.save();
+  // Feathers
+  const fcols=['#c04000','#e08020','#f0c000','#208040','#2040c0','#a020c0','#cc3333'];
+  for(let i=-7;i<=7;i++){
+    const h=(7-Math.abs(i))*18*s+60*s, ox=i*15*s, col=fcols[Math.abs(i)%fcols.length];
+    ctx.fillStyle=col;
+    ctx.beginPath(); ctx.moveTo(cx+ox-8*s,cy-2*s); ctx.quadraticCurveTo(cx+ox-14*s,cy-h*0.5,cx+ox,cy-h); ctx.quadraticCurveTo(cx+ox+14*s,cy-h*0.5,cx+ox+8*s,cy-2*s); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.25)'; ctx.lineWidth=1.5*s;
+    ctx.beginPath(); ctx.moveTo(cx+ox,cy-2*s); ctx.lineTo(cx+ox,cy-h*0.88); ctx.stroke();
+  }
+  // Mosaic headband
+  ['#c04000','#f0c000','#20a040','#2040c0','#c04000'].forEach((c,i)=>{ ctx.fillStyle=c; ctx.fillRect(cx-72*s+i*29*s,cy-6*s,29*s,18*s); });
+  ctx.strokeStyle='#f0c040'; ctx.lineWidth=2*s; ctx.strokeRect(cx-72*s,cy-6*s,145*s,18*s);
+  // Centre sun stone
+  ctx.fillStyle='#20c060'; ctx.beginPath(); ctx.arc(cx,cy+3*s,10*s,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#f0c040'; ctx.lineWidth=2*s; ctx.stroke();
+  ctx.fillStyle='#f0c040'; ctx.font=`bold ${13*s}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('☀',cx,cy+3*s);
+  ctx.restore();
+}
+
+/* ─── MUGHAL EMPEROR ─── */
+function drawMughal(ctx,lm,W,H){
+  const f=fw(lm), s=f/160;
+  const bm=browMid(lm), cx=bm.x, cy=bm.y-6*s;
+  ctx.save();
+  // Turban main dome
+  ctx.fillStyle='#5828a0';
+  ctx.beginPath(); ctx.ellipse(cx,cy-34*s,72*s,50*s,0,0,Math.PI*2); ctx.fill();
+  // Wrap bands (cloth layers)
+  ['rgba(90,50,150,0.7)','rgba(115,70,175,0.6)','rgba(70,35,120,0.65)'].forEach((c,i)=>{
+    ctx.fillStyle=c;
+    ctx.beginPath(); ctx.ellipse(cx,cy-14*s+i*14*s,72*s+i*4*s,13*s,0,0,Math.PI*2); ctx.fill();
+  });
+  ctx.strokeStyle='#c090e8'; ctx.lineWidth=2*s;
+  ctx.beginPath(); ctx.ellipse(cx,cy-34*s,72*s,50*s,0,0,Math.PI*2); ctx.stroke();
+  // Front fold highlight
+  ctx.fillStyle='rgba(150,90,210,0.45)';
+  ctx.beginPath(); ctx.moveTo(cx-68*s,cy+4*s); ctx.quadraticCurveTo(cx,cy-62*s,cx+68*s,cy+4*s); ctx.quadraticCurveTo(cx+28*s,cy+16*s,cx-28*s,cy+16*s); ctx.closePath(); ctx.fill();
+  // Pearl string across front
+  for(let i=-4;i<=4;i++){ ctx.fillStyle='#f8f0e8'; ctx.beginPath(); ctx.arc(cx+i*14*s,cy+14*s+Math.abs(i)*3*s,5*s,0,Math.PI*2); ctx.fill(); ctx.strokeStyle='rgba(200,180,150,0.5)'; ctx.lineWidth=1*s; ctx.stroke(); }
+  // Jigha brooch (central jewel)
+  ctx.fillStyle='#c9952a'; ctx.beginPath(); ctx.arc(cx,cy-72*s,13*s,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#f0d060'; ctx.lineWidth=2*s; ctx.stroke();
+  ctx.fillStyle='#cc0040'; ctx.beginPath(); ctx.arc(cx,cy-72*s,7*s,0,Math.PI*2); ctx.fill();
+  // Diamond sparkle lines
+  ctx.strokeStyle='rgba(255,210,160,0.9)'; ctx.lineWidth=1.2*s;
+  [0,45,90,135].forEach(deg=>{ const r=deg*Math.PI/180; ctx.beginPath(); ctx.moveTo(cx+Math.cos(r)*3*s,cy-72*s+Math.sin(r)*3*s); ctx.lineTo(cx+Math.cos(r)*11*s,cy-72*s+Math.sin(r)*11*s); ctx.stroke(); });
+  // Aigrette plumes
+  ctx.strokeStyle='rgba(240,220,180,0.75)'; ctx.lineWidth=2*s; ctx.lineCap='round';
+  [[0,22,14],[8,-6,6],[-8,-4,4]].forEach(([ox,bx,ex])=>{
+    ctx.beginPath(); ctx.moveTo(cx+ox*s,cy-84*s); ctx.quadraticCurveTo(cx+bx*s,cy-120*s,cx+ex*s,cy-158*s); ctx.stroke();
+  });
+  ctx.restore();
+}
+</script>
+</body>
+</html>
