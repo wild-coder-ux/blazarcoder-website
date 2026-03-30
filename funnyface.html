@@ -13,7 +13,6 @@
 body{background:var(--bg);color:var(--txt);font-family:'Arial Black',Impact,sans-serif;
   height:100vh;display:flex;flex-direction:column;overflow:hidden;user-select:none;}
 
-/* ── HEADER ── */
 #hdr{
   display:flex;align-items:center;justify-content:space-between;
   padding:10px 14px;flex-shrink:0;border-bottom:1px solid var(--border);
@@ -27,7 +26,6 @@ body{background:var(--bg);color:var(--txt);font-family:'Arial Black',Impact,sans
   display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .hbtn:hover{color:#fff;border-color:#444;}
 
-/* ── VIDEO STAGE ── */
 #stage{position:relative;flex:1;overflow:hidden;background:#000;}
 #video{position:absolute;inset:0;width:100%;height:100%;
   object-fit:cover;transform:scaleX(-1);visibility:hidden;}
@@ -40,7 +38,6 @@ body{background:var(--bg);color:var(--txt);font-family:'Arial Black',Impact,sans
 .status-txt{font-size:13px;color:#aaa;letter-spacing:.05em;}
 .status-sub{font-size:11px;color:#555;margin-top:6px;}
 
-/* Filter name tag */
 #ftag{
   position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
   background:rgba(255,61,0,0.85);color:#fff;font-size:11px;
@@ -48,7 +45,6 @@ body{background:var(--bg);color:var(--txt);font-family:'Arial Black',Impact,sans
   padding:5px 16px;border-radius:4px;pointer-events:none;z-index:5;
   white-space:nowrap;
 }
-/* Landmark count */
 #lm-dot{
   position:absolute;top:10px;right:10px;width:8px;height:8px;
   border-radius:50%;background:#ff3d00;z-index:6;
@@ -57,12 +53,10 @@ body{background:var(--bg);color:var(--txt);font-family:'Arial Black',Impact,sans
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(0.7);}}
 #lm-dot.inactive{background:#333;animation:none;}
 
-/* ── BOTTOM PANEL ── */
 #panel{
   background:var(--panel);border-top:1px solid var(--border);
   flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,4px);
 }
-/* Filter strip */
 #fstrip{
   display:flex;gap:8px;overflow-x:auto;padding:10px 12px 6px;
   scrollbar-width:none;
@@ -83,7 +77,6 @@ body{background:var(--bg);color:var(--txt);font-family:'Arial Black',Impact,sans
 .fname{font-size:9px;color:var(--muted);margin-top:4px;
   font-family:Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
 
-/* Action row */
 #abar{
   display:flex;align-items:center;justify-content:space-around;
   padding:6px 20px 10px;
@@ -104,7 +97,6 @@ body{background:var(--bg);color:var(--txt);font-family:'Arial Black',Impact,sans
 #shutter:active{transform:scale(.93);}
 #shutter-in{width:50px;height:50px;border-radius:50%;background:#fff;}
 
-/* Intensity slider */
 #introw{
   display:flex;align-items:center;gap:10px;padding:0 14px 4px;
 }
@@ -120,12 +112,10 @@ input[type=range]::-webkit-slider-thumb{
 }
 .intval{font-size:9px;color:var(--muted);font-family:Arial,sans-serif;width:22px;text-align:right;}
 
-/* Flash */
 #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;
   z-index:999;transition:opacity .05s;}
 #flash.go{opacity:.85;transition:opacity .5s ease-out;}
 
-/* Toast */
 #toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
   background:rgba(0,0,0,.9);border:1px solid #333;color:#fff;
   font-size:11px;padding:8px 18px;border-radius:6px;
@@ -133,7 +123,6 @@ input[type=range]::-webkit-slider-thumb{
   font-family:Arial,sans-serif;white-space:nowrap;}
 #toast.show{opacity:1;}
 
-/* Perm overlay */
 #perm{position:fixed;inset:0;background:#0a0a0a;z-index:990;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
 #perm.gone{display:none;}
@@ -156,7 +145,6 @@ input[type=range]::-webkit-slider-thumb{
 <div id="flash"></div>
 <div id="toast"></div>
 
-<!-- Permission screen -->
 <div id="perm">
   <div class="perm-emoji">😜</div>
   <div class="perm-h">FUNNY<span>FACE</span></div>
@@ -164,7 +152,6 @@ input[type=range]::-webkit-slider-thumb{
   <button id="perm-btn" onclick="boot()">Allow Camera</button>
 </div>
 
-<!-- App -->
 <div id="hdr">
   <div class="logo">FUNNY<span>FACE</span></div>
   <div style="display:flex;gap:6px;">
@@ -180,8 +167,8 @@ input[type=range]::-webkit-slider-thumb{
   <div id="ftag">Select a filter</div>
   <div id="status">
     <div class="status-icon">🎭</div>
-    <div class="status-txt">Loading face engine…</div>
-    <div class="status-sub">Using MediaPipe FaceMesh</div>
+    <div class="status-txt">Tap Allow Camera to start</div>
+    <div class="status-sub">Using MediaPipe Tasks Vision</div>
   </div>
 </div>
 
@@ -206,12 +193,16 @@ input[type=range]::-webkit-slider-thumb{
   </div>
 </div>
 
-<!-- MediaPipe -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-
-<script>
+<!-- ✅ NEW MediaPipe Tasks Vision CDN (replaces broken @mediapipe/face_mesh) -->
+<script type="module">
 'use strict';
+
+// Import from the NEW MediaPipe Tasks Vision package
+import {
+  FaceLandmarker,
+  FilesetResolver,
+  DrawingUtils
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
 
 // ── CONFIG ────────────────────────────────────────────────────────────────
 const FILTERS = [
@@ -234,164 +225,193 @@ const S = {
   intensity: 1.0,
   facing: 'user',
   stream: null,
-  landmarks: null,
-  faceW: 0, faceH: 0,
   lastFrame: null,
-  mp_camera: null,
+  captureNext: false,
+  faceLandmarker: null,
+  animFrameId: null,
+  running: false,
 };
 
 const video  = document.getElementById('video');
 const canvas = document.getElementById('canvas');
-const ctx    = canvas.getContext('2d');
+const ctx    = canvas.getContext('2d', { willReadFrequently: true });
 const ftag   = document.getElementById('ftag');
 const lmdot  = document.getElementById('lm-dot');
-const status = document.getElementById('status');
+const statusEl = document.getElementById('status');
+
+// Expose boot() to global scope for onclick
+window.boot = boot;
+window.flip = flip;
+window.save = save;
+window.shoot = shoot;
+window.onInt = onInt;
 
 // ── BOOT ──────────────────────────────────────────────────────────────────
 async function boot(){
   document.getElementById('perm').classList.add('gone');
   buildStrip();
   initSlider();
+  setStatus('🔄', 'Loading AI model…', 'Downloading FaceLandmarker WASM');
+
+  try {
+    await loadFaceLandmarker();
+  } catch(e) {
+    setStatus('❌', 'Model failed to load', e.message);
+    return;
+  }
+
   await startCam();
-  initMesh();
 }
 
+// ── MEDIAPIPE TASKS VISION (NEW API) ──────────────────────────────────────
+async function loadFaceLandmarker() {
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+  );
+  S.faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath:
+        "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+      delegate: "GPU",
+    },
+    runningMode: "VIDEO",
+    numFaces: 1,
+  });
+}
+
+// ── CAMERA ────────────────────────────────────────────────────────────────
 async function startCam(){
   try {
     if(S.stream) S.stream.getTracks().forEach(t=>t.stop());
+    if(S.animFrameId) { cancelAnimationFrame(S.animFrameId); S.animFrameId=null; }
+
     S.stream = await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:S.facing,width:{ideal:1280},height:{ideal:720}},audio:false
+      video:{ facingMode: S.facing, width:{ideal:1280}, height:{ideal:720} },
+      audio: false
     });
     video.srcObject = S.stream;
     await video.play();
     resize();
+    setStatus(null); // hide status
+    renderLoop();
   } catch(e){
-    status.innerHTML='<div class="status-icon">❌</div><div class="status-txt">Camera denied</div>';
+    setStatus('❌', 'Camera denied', e.message);
     document.getElementById('perm').classList.remove('gone');
   }
 }
 
+function setStatus(icon, txt, sub){
+  if(!icon){ statusEl.style.display='none'; return; }
+  statusEl.style.display='';
+  statusEl.querySelector('.status-icon').textContent = icon||'';
+  statusEl.querySelector('.status-txt').textContent  = txt||'';
+  statusEl.querySelector('.status-sub').textContent  = sub||'';
+}
+
 function resize(){
-  const s=document.getElementById('stage');
-  canvas.width=s.offsetWidth; canvas.height=s.offsetHeight;
+  const s = document.getElementById('stage');
+  canvas.width  = s.offsetWidth;
+  canvas.height = s.offsetHeight;
 }
-window.addEventListener('resize',resize);
+window.addEventListener('resize', resize);
 
-// ── MEDIAPIPE FACE MESH ───────────────────────────────────────────────────
-let faceMesh;
-function initMesh(){
-  status.querySelector('.status-txt').textContent='Loading FaceMesh…';
-  faceMesh = new FaceMesh({locateFile: f=>`https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`});
-  faceMesh.setOptions({
-    maxNumFaces: 1,
-    refineLandmarks: true,
-    minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5
-  });
-  faceMesh.onResults(onResults);
+// ── RENDER LOOP ───────────────────────────────────────────────────────────
+let lastVideoTime = -1;
 
-  const cam = new Camera(video,{
-    onFrame: async ()=>{ await faceMesh.send({image:video}); },
-    width:640, height:480
-  });
-  cam.start().then(()=>{
-    status.style.display='none';
-    video.style.visibility='hidden';
-  }).catch(e=>{
-    status.querySelector('.status-txt').textContent='FaceMesh failed: '+e.message;
-  });
-}
+function renderLoop(){
+  if(!S.faceLandmarker || video.readyState < 2){
+    S.animFrameId = requestAnimationFrame(renderLoop);
+    return;
+  }
 
-// ── RESULT HANDLER ────────────────────────────────────────────────────────
-function onResults(results){
-  const W=canvas.width, H=canvas.height;
-  ctx.clearRect(0,0,W,H);
+  const W = canvas.width, H = canvas.height;
+
+  // Only run detection when a new video frame arrives
+  let results = null;
+  if(video.currentTime !== lastVideoTime){
+    lastVideoTime = video.currentTime;
+    try {
+      results = S.faceLandmarker.detectForVideo(video, performance.now());
+    } catch(e){ /* ignore occasional errors */ }
+  }
 
   // Draw mirrored video frame
   ctx.save();
-  ctx.scale(-1,1);
-  ctx.drawImage(results.image,-W,0,W,H);
+  ctx.scale(-1, 1);
+  ctx.drawImage(video, -W, 0, W, H);
   ctx.restore();
 
-  if(results.multiFaceLandmarks && results.multiFaceLandmarks.length){
+  if(results && results.faceLandmarks && results.faceLandmarks.length > 0){
     lmdot.classList.remove('inactive');
-    const lm = results.multiFaceLandmarks[0];
-    S.landmarks = lm;
+    const lm = results.faceLandmarks[0];
 
     const filter = FILTERS[S.activeFilter];
     if(filter.warp){
-      applyWarp(ctx, results.image, lm, W, H, filter.warp, S.intensity);
+      applyWarp(ctx, video, lm, W, H, filter.warp, S.intensity);
     }
   } else {
-    lmdot.classList.add('inactive');
+    if(results) lmdot.classList.add('inactive');
   }
 
-  // Store for capture
-  S.lastFrame = canvas.toDataURL('image/jpeg',0.92);
+  // Only capture when shutter was pressed
+  if(S.captureNext){
+    S.lastFrame = canvas.toDataURL('image/jpeg', 0.92);
+    S.captureNext = false;
+  }
+
+  S.animFrameId = requestAnimationFrame(renderLoop);
 }
 
 // ── WARP ENGINE ───────────────────────────────────────────────────────────
-// Core: takes the live frame, reads the landmark mesh,
-// then for each region applies a bulge/shrink displacement,
-// and composites the warped region back onto canvas.
-
 function applyWarp(ctx, img, lm, W, H, warpFn, intensity){
-  // Get warp commands [{cx,cy,radius,strength,mode}]
   const commands = warpFn(lm, W, H, intensity);
 
-  // We composite warped patches using offscreen canvas
   const tmp = document.createElement('canvas');
   tmp.width=W; tmp.height=H;
-  const tc = tmp.getContext('2d');
+  const tc = tmp.getContext('2d', { willReadFrequently: true });
   tc.save(); tc.scale(-1,1); tc.drawImage(img,-W,0,W,H); tc.restore();
 
   const out = document.createElement('canvas');
   out.width=W; out.height=H;
-  const oc2 = out.getContext('2d');
-  oc2.drawImage(tmp,0,0);
+  const oc = out.getContext('2d', { willReadFrequently: true });
+  oc.drawImage(tmp,0,0);
 
+  const tmpCtx = tc; // reuse context reference
   commands.forEach(cmd=>{
-    warpRegion(tmp, oc2, cmd.cx, cmd.cy, cmd.radius, cmd.strength, cmd.mode);
+    warpRegion(tmpCtx, oc, cmd.cx, cmd.cy, cmd.radius, cmd.strength, cmd.mode, W, H);
   });
 
   ctx.clearRect(0,0,W,H);
   ctx.drawImage(out,0,0);
 }
 
-function warpRegion(src, dst, cx, cy, radius, strength, mode){
-  // mode: 'bulge' | 'shrink' | 'stretch_x' | 'stretch_y' | 'shift'
+function warpRegion(srcCtx, dstCtx, cx, cy, radius, strength, mode, cW, cH){
   const r = Math.round(radius);
-  const sx = Math.max(0, Math.round(cx-r)), sy = Math.max(0, Math.round(cy-r));
-  const sw = Math.min(r*2, src.canvas.width-sx), sh = Math.min(r*2, src.canvas.height-sy);
+  if(r < 2) return;
+  const sx = Math.max(0, Math.round(cx-r));
+  const sy = Math.max(0, Math.round(cy-r));
+  const sw = Math.min(r*2, cW-sx);
+  const sh = Math.min(r*2, cH-sy);
   if(sw<=0||sh<=0) return;
 
-  const src_id = src.getContext('2d').getImageData(sx,sy,sw,sh);
-  const dst_id = dst.getImageData(sx,sy,sw,sh);
+  const src_id = srcCtx.getImageData(sx,sy,sw,sh);
+  const dst_id = dstCtx.getImageData(sx,sy,sw,sh);
   const sd=src_id.data, dd=dst_id.data;
 
   for(let py=0;py<sh;py++){
     for(let px=0;px<sw;px++){
-      // Coords relative to region centre
       const dx=(px-(sw/2))/(sw/2), dy=(py-(sh/2))/(sh/2);
       const dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist>1){
-        // Outside circle: copy as-is
-        const i=(py*sw+px)*4;
-        // already correct from dst drawImage base, skip
-        continue;
-      }
+      if(dist>1) continue;
 
-      // Falloff: smooth at edges
       const falloff = Math.cos(dist*Math.PI*0.5);
-      let sx2,sy2;
+      let sx2, sy2;
 
       if(mode==='bulge'){
-        // Push pixels outward from centre
         const factor = 1 + strength*falloff;
         sx2 = (sw/2) + dx*sw/2/factor;
         sy2 = (sh/2) + dy*sh/2/factor;
       } else if(mode==='shrink'){
-        // Pull pixels inward to centre
         const factor = 1 - strength*0.6*falloff;
         sx2 = (sw/2) + dx*sw/2*factor;
         sy2 = (sh/2) + dy*sh/2*factor;
@@ -411,7 +431,6 @@ function warpRegion(src, dst, cx, cy, radius, strength, mode){
         sx2=px; sy2=py;
       }
 
-      // Bilinear sample from source
       sx2=Math.max(0,Math.min(sw-1,sx2));
       sy2=Math.max(0,Math.min(sh-1,sy2));
       const x0=Math.floor(sx2), y0=Math.floor(sy2);
@@ -426,10 +445,11 @@ function warpRegion(src, dst, cx, cy, radius, strength, mode){
       }
     }
   }
-  dst.putImageData(dst_id,sx,sy);
+  dstCtx.putImageData(dst_id,sx,sy);
 }
 
 // ── LANDMARK HELPERS ──────────────────────────────────────────────────────
+// NOTE: New API returns normalized [0..1] coords same as before
 function lpt(lm, i, W, H){ return {x:lm[i].x*W, y:lm[i].y*H}; }
 function lmid(lm, idxs, W, H){
   let x=0,y=0;
@@ -440,28 +460,6 @@ function lmdist(lm, i, j, W, H){
   const a=lpt(lm,i,W,H),b=lpt(lm,j,W,H);
   return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);
 }
-
-// Key landmark indices (MediaPipe 468-point mesh)
-const IDX = {
-  leftEye:[33,7,163,144,145,153,154,155,133,173,157,158,159,160,161,246],
-  rightEye:[362,382,381,380,374,373,390,249,263,466,388,387,386,385,384,398],
-  leftEyeCtr:[468],  // refined
-  rightEyeCtr:[473],
-  nose:[1,2,98,327,115,344,94],
-  noseTip:[4],
-  noseWidth:[129,358],
-  mouthOuter:[61,185,40,39,37,0,267,269,270,409,291,375,321,405,314,17,84,181,91,146],
-  mouthCtr:[0],
-  leftMouth:[61],
-  rightMouth:[291],
-  topLip:[0,37,267],
-  chin:[152],
-  forehead:[10],
-  leftJaw:[234],
-  rightJaw:[454],
-  leftCheek:[117],
-  rightCheek:[346],
-};
 
 // ── FILTER WARP FUNCTIONS ─────────────────────────────────────────────────
 function warpBigEyes(lm,W,H,t){
@@ -474,7 +472,6 @@ function warpBigEyes(lm,W,H,t){
     {cx:re.x,cy:re.y,radius:er,strength:s,mode:'bulge'},
   ];
 }
-
 function warpTinyEyes(lm,W,H,t){
   const le=lmid(lm,[33,133,159,145],W,H);
   const re=lmid(lm,[362,263,386,374],W,H);
@@ -485,13 +482,11 @@ function warpTinyEyes(lm,W,H,t){
     {cx:re.x,cy:re.y,radius:er,strength:s,mode:'shrink'},
   ];
 }
-
 function warpBigNose(lm,W,H,t){
   const n=lmid(lm,[1,4,2,98,327],W,H);
   const nr=lmdist(lm,129,358,W,H)*1.6;
   return [{cx:n.x,cy:n.y,radius:nr,strength:t*0.7,mode:'bulge'}];
 }
-
 function warpBigLips(lm,W,H,t){
   const mc=lmid(lm,[0,17,61,291],W,H);
   const mr=lmdist(lm,61,291,W,H)*1.0;
@@ -501,7 +496,6 @@ function warpBigLips(lm,W,H,t){
     {cx:mc.x,cy:mc.y,radius:mr*1.2,strength:s*0.4,mode:'bulge'},
   ];
 }
-
 function warpFatFace(lm,W,H,t){
   const lc=lmid(lm,[234,127,162],W,H);
   const rc=lmid(lm,[454,356,389],W,H);
@@ -510,11 +504,9 @@ function warpFatFace(lm,W,H,t){
   return [
     {cx:lc.x,cy:lc.y,radius:cr,strength:s,mode:'stretch_x'},
     {cx:rc.x,cy:rc.y,radius:cr,strength:s,mode:'stretch_x'},
-    // Also widen nose/cheeks
     {cx:(lc.x+rc.x)/2,cy:lc.y,radius:cr*2.5,strength:s*0.3,mode:'stretch_x'},
   ];
 }
-
 function warpSkull(lm,W,H,t){
   const top=lmid(lm,[10,67,109],W,H);
   const chin=lmid(lm,[152,175],W,H);
@@ -522,11 +514,10 @@ function warpSkull(lm,W,H,t){
   const cr=lmdist(lm,152,234,W,H)*0.5;
   const s=t*0.6;
   return [
-    {cx:top.x,cy:top.y,radius:fr,strength:s,mode:'stretch_y'},   // big forehead
-    {cx:chin.x,cy:chin.y,radius:cr,strength:s*0.8,mode:'squish_y'}, // squish chin
+    {cx:top.x,cy:top.y,radius:fr,strength:s,mode:'stretch_y'},
+    {cx:chin.x,cy:chin.y,radius:cr,strength:s*0.8,mode:'squish_y'},
   ];
 }
-
 function warpAlien(lm,W,H,t){
   const top=lmid(lm,[10,67,109,338,297],W,H);
   const chin=lmid(lm,[152,175],W,H);
@@ -543,7 +534,6 @@ function warpAlien(lm,W,H,t){
     {cx:chin.x,cy:chin.y,radius:er,strength:s*0.7,mode:'squish_y'},
   ];
 }
-
 function warpMonkey(lm,W,H,t){
   const n=lmid(lm,[1,4,2],W,H);
   const mc=lmid(lm,[0,17],W,H);
@@ -551,15 +541,13 @@ function warpMonkey(lm,W,H,t){
   const mr=lmdist(lm,61,291,W,H)*1.2;
   const s=t*0.6;
   return [
-    {cx:n.x,cy:n.y,radius:nr,strength:s*0.8,mode:'bulge'},  // big nose
-    {cx:mc.x,cy:mc.y,radius:mr,strength:s*0.6,mode:'stretch_y'},  // big lips
-    {cx:n.x,cy:n.y-nr,radius:nr*0.8,strength:s*0.3,mode:'shrink'}, // squish eyes
-    // Ear region widening
+    {cx:n.x,cy:n.y,radius:nr,strength:s*0.8,mode:'bulge'},
+    {cx:mc.x,cy:mc.y,radius:mr,strength:s*0.6,mode:'stretch_y'},
+    {cx:n.x,cy:n.y-nr,radius:nr*0.8,strength:s*0.3,mode:'shrink'},
     {cx:lmid(lm,[234],W,H).x,cy:lmid(lm,[234],W,H).y,radius:nr*0.8,strength:s*0.5,mode:'stretch_x'},
     {cx:lmid(lm,[454],W,H).x,cy:lmid(lm,[454],W,H).y,radius:nr*0.8,strength:s*0.5,mode:'stretch_x'},
   ];
 }
-
 function warpAngry(lm,W,H,t){
   const le=lmid(lm,[33,133,159,145],W,H);
   const re=lmid(lm,[362,263,386,374],W,H);
@@ -571,11 +559,9 @@ function warpAngry(lm,W,H,t){
     {cx:le.x+er*0.3,cy:le.y-er*0.2,radius:er*1.1,strength:s*0.5,mode:'bulge'},
     {cx:re.x-er*0.3,cy:re.y-er*0.2,radius:er*1.1,strength:s*0.5,mode:'bulge'},
     {cx:n.x,cy:n.y,radius:nr*1.5,strength:s*0.4,mode:'bulge'},
-    // Squish brow area down
     {cx:(le.x+re.x)/2,cy:(le.y+re.y)/2-er,radius:er*2,strength:s*0.35,mode:'squish_y'},
   ];
 }
-
 function warpCute(lm,W,H,t){
   const le=lmid(lm,[33,133,159,145],W,H);
   const re=lmid(lm,[362,263,386,374],W,H);
@@ -586,14 +572,11 @@ function warpCute(lm,W,H,t){
   return [
     {cx:le.x,cy:le.y,radius:er,strength:s*0.7,mode:'bulge'},
     {cx:re.x,cy:re.y,radius:er,strength:s*0.7,mode:'bulge'},
-    {cx:mc.x,cy:mc.y,radius:mr,strength:s*0.5,mode:'shrink'},  // tiny mouth
-    // Squish forehead/head to make it rounder/chibi
+    {cx:mc.x,cy:mc.y,radius:mr,strength:s*0.5,mode:'shrink'},
     {cx:lmid(lm,[10],W,H).x,cy:lmid(lm,[10],W,H).y,radius:er*2,strength:s*0.4,mode:'squish_y'},
   ];
 }
-
 function warpMewing(lm,W,H,t){
-  // Mewing = sharp jaw, high cheekbones, slightly squished face vertically
   const lj=lmid(lm,[234,132,172],W,H);
   const rj=lmid(lm,[454,361,397],W,H);
   const chin=lmid(lm,[152,175,148],W,H);
@@ -602,10 +585,10 @@ function warpMewing(lm,W,H,t){
   const jr=lmdist(lm,234,454,W,H)*0.3;
   const s=t*0.5;
   return [
-    {cx:lj.x,cy:lj.y,radius:jr,strength:s*0.6,mode:'squish_x'},   // sharpen left jaw
-    {cx:rj.x,cy:rj.y,radius:jr,strength:s*0.6,mode:'squish_x'},   // sharpen right jaw
-    {cx:chin.x,cy:chin.y,radius:jr*1.2,strength:s*0.5,mode:'squish_y'}, // sharpen chin point
-    {cx:lc.x,cy:lc.y,radius:jr*1.2,strength:s*0.4,mode:'bulge'},  // raise cheekbones
+    {cx:lj.x,cy:lj.y,radius:jr,strength:s*0.6,mode:'squish_x'},
+    {cx:rj.x,cy:rj.y,radius:jr,strength:s*0.6,mode:'squish_x'},
+    {cx:chin.x,cy:chin.y,radius:jr*1.2,strength:s*0.5,mode:'squish_y'},
+    {cx:lc.x,cy:lc.y,radius:jr*1.2,strength:s*0.4,mode:'bulge'},
     {cx:rc.x,cy:rc.y,radius:jr*1.2,strength:s*0.4,mode:'bulge'},
   ];
 }
@@ -649,7 +632,6 @@ function onInt(el){
 
 async function flip(){
   S.facing=S.facing==='user'?'environment':'user';
-  if(S.mp_camera) await S.mp_camera.stop();
   await startCam();
 }
 
@@ -657,7 +639,7 @@ function shoot(){
   const f=document.getElementById('flash');
   f.classList.add('go'); setTimeout(()=>f.classList.remove('go'),600);
   S.captureNext=true;
-  toast('📸 Captured! Tap Save to download');
+  toast('📸 Tap Save to download');
 }
 
 function save(){
@@ -680,6 +662,7 @@ navigator.mediaDevices?.getUserMedia({video:true}).then(s=>{
   s.getTracks().forEach(t=>t.stop());
   boot();
 }).catch(()=>{});
+
 </script>
 </body>
 </html>
