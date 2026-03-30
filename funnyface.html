@@ -32,18 +32,29 @@ body{background:var(--bg);color:var(--txt);font-family:'Arial Black',Impact,sans
 #canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
 #status{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  text-align:center;pointer-events:none;z-index:5;
+  text-align:center;pointer-events:none;z-index:5;width:290px;
 }
 .status-icon{font-size:48px;margin-bottom:12px;}
 .status-txt{font-size:13px;color:#aaa;letter-spacing:.05em;}
-.status-sub{font-size:11px;color:#555;margin-top:6px;}
+.status-sub{font-size:11px;color:#555;margin-top:6px;line-height:1.5;}
+
+#prog-wrap{width:220px;height:4px;background:#222;border-radius:2px;
+  margin:14px auto 0;overflow:hidden;display:none;}
+#prog-bar{height:100%;background:var(--accent);border-radius:2px;
+  width:0%;transition:width .3s ease;}
+#prog-pct{font-size:10px;color:#555;margin-top:6px;font-family:Arial,sans-serif;}
+#retry-btn{
+  display:none;background:var(--accent);color:#fff;border:none;cursor:pointer;
+  font-family:'Arial Black',sans-serif;font-size:11px;font-weight:900;
+  letter-spacing:.1em;padding:10px 22px;border-radius:6px;margin-top:14px;
+  text-transform:uppercase;pointer-events:all;
+}
 
 #ftag{
   position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
   background:rgba(255,61,0,0.85);color:#fff;font-size:11px;
   font-weight:900;letter-spacing:.12em;text-transform:uppercase;
-  padding:5px 16px;border-radius:4px;pointer-events:none;z-index:5;
-  white-space:nowrap;
+  padding:5px 16px;border-radius:4px;pointer-events:none;z-index:5;white-space:nowrap;
 }
 #lm-dot{
   position:absolute;top:10px;right:10px;width:8px;height:8px;
@@ -53,34 +64,20 @@ body{background:var(--bg);color:var(--txt);font-family:'Arial Black',Impact,sans
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(0.7);}}
 #lm-dot.inactive{background:#333;animation:none;}
 
-#panel{
-  background:var(--panel);border-top:1px solid var(--border);
-  flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,4px);
-}
-#fstrip{
-  display:flex;gap:8px;overflow-x:auto;padding:10px 12px 6px;
-  scrollbar-width:none;
-}
+#panel{background:var(--panel);border-top:1px solid var(--border);
+  flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,4px);}
+#fstrip{display:flex;gap:8px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;}
 #fstrip::-webkit-scrollbar{display:none;}
-.fcard{
-  flex-shrink:0;width:72px;cursor:pointer;text-align:center;
-  transition:transform .12s;
-}
+.fcard{flex-shrink:0;width:72px;cursor:pointer;text-align:center;transition:transform .12s;}
 .fcard:hover{transform:scale(1.06);}
 .fcard.active .fface{border-color:#ff3d00;box-shadow:0 0 12px rgba(255,61,0,.5);}
-.fface{
-  width:72px;height:72px;border-radius:10px;border:2px solid var(--border);
-  background:var(--card);overflow:hidden;position:relative;
-  display:flex;align-items:center;justify-content:center;
-  font-size:36px;transition:border-color .15s;
-}
-.fname{font-size:9px;color:var(--muted);margin-top:4px;
-  font-family:Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
+.fface{width:72px;height:72px;border-radius:10px;border:2px solid var(--border);
+  background:var(--card);display:flex;align-items:center;justify-content:center;
+  font-size:36px;transition:border-color .15s;}
+.fname{font-size:9px;color:var(--muted);margin-top:4px;font-family:Arial,sans-serif;
+  font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
 
-#abar{
-  display:flex;align-items:center;justify-content:space-around;
-  padding:6px 20px 10px;
-}
+#abar{display:flex;align-items:center;justify-content:space-around;padding:6px 20px 10px;}
 .abtn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;}
 .abtn:hover .aicon{background:#222;}
 .aicon{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--border);
@@ -88,34 +85,25 @@ body{background:var(--bg);color:var(--txt);font-family:'Arial Black',Impact,sans
   font-size:18px;transition:background .15s;}
 .albl{font-size:9px;color:var(--muted);font-family:Arial,sans-serif;
   font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
-#shutter{
-  width:64px;height:64px;border-radius:50%;border:3px solid #fff;
+#shutter{width:64px;height:64px;border-radius:50%;border:3px solid #fff;
   background:transparent;cursor:pointer;display:flex;align-items:center;
-  justify-content:center;transition:all .12s;
-}
+  justify-content:center;transition:all .12s;}
 #shutter:hover{background:rgba(255,255,255,.1);}
 #shutter:active{transform:scale(.93);}
 #shutter-in{width:50px;height:50px;border-radius:50%;background:#fff;}
 
-#introw{
-  display:flex;align-items:center;gap:10px;padding:0 14px 4px;
-}
+#introw{display:flex;align-items:center;gap:10px;padding:0 14px 4px;}
 .intlbl{font-size:9px;color:var(--muted);font-family:Arial,sans-serif;
   font-weight:700;text-transform:uppercase;letter-spacing:.06em;width:50px;}
-input[type=range]{
-  flex:1;-webkit-appearance:none;height:3px;border-radius:2px;cursor:pointer;
-  background:linear-gradient(90deg,#ff3d00 var(--pct,70%),#333 var(--pct,70%));
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
-  background:#fff;border:2px solid #ff3d00;
-}
+input[type=range]{flex:1;-webkit-appearance:none;height:3px;border-radius:2px;cursor:pointer;
+  background:linear-gradient(90deg,#ff3d00 var(--pct,70%),#333 var(--pct,70%));}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;
+  border-radius:50%;background:#fff;border:2px solid #ff3d00;}
 .intval{font-size:9px;color:var(--muted);font-family:Arial,sans-serif;width:22px;text-align:right;}
 
 #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;
   z-index:999;transition:opacity .05s;}
 #flash.go{opacity:.85;transition:opacity .5s ease-out;}
-
 #toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
   background:rgba(0,0,0,.9);border:1px solid #333;color:#fff;
   font-size:11px;padding:8px 18px;border-radius:6px;
@@ -131,12 +119,10 @@ input[type=range]::-webkit-slider-thumb{
 .perm-h{font-size:24px;font-weight:900;letter-spacing:-1px;}
 .perm-h span{color:var(--accent);}
 .perm-p{font-size:13px;color:#777;font-family:Arial,sans-serif;text-align:center;max-width:260px;line-height:1.6;}
-#perm-btn{
-  background:var(--accent);color:#fff;border:none;cursor:pointer;
+#perm-btn{background:var(--accent);color:#fff;border:none;cursor:pointer;
   font-family:'Arial Black',sans-serif;font-size:13px;font-weight:900;
   letter-spacing:.1em;padding:14px 32px;border-radius:8px;margin-top:6px;
-  text-transform:uppercase;transition:filter .15s;
-}
+  text-transform:uppercase;transition:filter .15s;}
 #perm-btn:hover{filter:brightness(1.2);}
 </style>
 </head>
@@ -156,7 +142,7 @@ input[type=range]::-webkit-slider-thumb{
   <div class="logo">FUNNY<span>FACE</span></div>
   <div style="display:flex;gap:6px;">
     <div class="hbtn" onclick="flip()" title="Flip">⟳</div>
-    <div class="hbtn" onclick="save()" title="Save">↓</div>
+    <div class="hbtn" onclick="doSave()" title="Save">↓</div>
   </div>
 </div>
 
@@ -168,7 +154,10 @@ input[type=range]::-webkit-slider-thumb{
   <div id="status">
     <div class="status-icon">🎭</div>
     <div class="status-txt">Tap Allow Camera to start</div>
-    <div class="status-sub">Using MediaPipe Tasks Vision</div>
+    <div class="status-sub">Face warp filters · No data stored</div>
+    <div id="prog-wrap"><div id="prog-bar"></div></div>
+    <div id="prog-pct"></div>
+    <button id="retry-btn" onclick="retryLoad()">↺ Retry</button>
   </div>
 </div>
 
@@ -176,421 +165,305 @@ input[type=range]::-webkit-slider-thumb{
   <div id="fstrip"></div>
   <div id="introw">
     <div class="intlbl">Intensity</div>
-    <input type="range" id="intslider" min="10" max="200" value="100" step="1"
-      oninput="onInt(this)">
+    <input type="range" id="intslider" min="10" max="200" value="100" step="1" oninput="onInt(this)">
     <div class="intval" id="intval">100</div>
   </div>
   <div id="abar">
-    <div class="abtn" onclick="flip()">
-      <div class="aicon">⟳</div>
-      <div class="albl">Flip</div>
-    </div>
+    <div class="abtn" onclick="flip()"><div class="aicon">⟳</div><div class="albl">Flip</div></div>
     <div id="shutter" onclick="shoot()"><div id="shutter-in"></div></div>
-    <div class="abtn" onclick="save()">
-      <div class="aicon">↓</div>
-      <div class="albl">Save</div>
-    </div>
+    <div class="abtn" onclick="doSave()"><div class="aicon">↓</div><div class="albl">Save</div></div>
   </div>
 </div>
 
-<!-- ✅ NEW MediaPipe Tasks Vision CDN (replaces broken @mediapipe/face_mesh) -->
 <script type="module">
 'use strict';
 
-// Import from the NEW MediaPipe Tasks Vision package
-import {
-  FaceLandmarker,
-  FilesetResolver,
-  DrawingUtils
-} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+const WASM_CDNS = [
+  'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm',
+  'https://unpkg.com/@mediapipe/tasks-vision@0.10.14/wasm',
+];
+const MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
 
-// ── CONFIG ────────────────────────────────────────────────────────────────
 const FILTERS = [
-  { id:'none',    name:'Normal',   emoji:'😐', desc:'No filter',            warp: null },
-  { id:'bigEyes', name:'Bug Eyes', emoji:'👀', desc:'Huge bulging eyes',     warp: warpBigEyes },
-  { id:'tinEyes', name:'Tiny Eyes',emoji:'🔬', desc:'Squished tiny eyes',    warp: warpTinyEyes },
-  { id:'bigNose', name:'Big Nose', emoji:'🐽', desc:'Enormous nose',         warp: warpBigNose },
-  { id:'bigLip',  name:'Big Lips', emoji:'💋', desc:'Giant puffy lips',      warp: warpBigLips },
-  { id:'fatFace', name:'Fat Face', emoji:'🥴', desc:'Wide fat face',         warp: warpFatFace },
-  { id:'skull',   name:'Skull',    emoji:'💀', desc:'Stretched skull',       warp: warpSkull },
-  { id:'alien',   name:'Alien',    emoji:'👽', desc:'Alien head shape',      warp: warpAlien },
-  { id:'monkey',  name:'Monkey',   emoji:'🐒', desc:'Monkey expression',     warp: warpMonkey },
-  { id:'angry',   name:'Angry',    emoji:'😤', desc:'Rage face warp',        warp: warpAngry },
-  { id:'cute',    name:'Cute',     emoji:'🥺', desc:'Cute chibi face',       warp: warpCute },
-  { id:'mew',     name:'Mewing',   emoji:'🫤', desc:'Sharp jawline',         warp: warpMewing },
+  {id:'none',    name:'Normal',   emoji:'😐',desc:'No filter',         warp:null},
+  {id:'bigEyes', name:'Bug Eyes', emoji:'👀',desc:'Huge bulging eyes', warp:warpBigEyes},
+  {id:'tinEyes', name:'Tiny Eyes',emoji:'🔬',desc:'Tiny squished eyes',warp:warpTinyEyes},
+  {id:'bigNose', name:'Big Nose', emoji:'🐽',desc:'Enormous nose',     warp:warpBigNose},
+  {id:'bigLip',  name:'Big Lips', emoji:'💋',desc:'Giant puffy lips',  warp:warpBigLips},
+  {id:'fatFace', name:'Fat Face', emoji:'🥴',desc:'Wide fat face',     warp:warpFatFace},
+  {id:'skull',   name:'Skull',    emoji:'💀',desc:'Stretched skull',   warp:warpSkull},
+  {id:'alien',   name:'Alien',    emoji:'👽',desc:'Alien head shape',  warp:warpAlien},
+  {id:'monkey',  name:'Monkey',   emoji:'🐒',desc:'Monkey expression', warp:warpMonkey},
+  {id:'angry',   name:'Angry',    emoji:'😤',desc:'Rage face warp',    warp:warpAngry},
+  {id:'cute',    name:'Cute',     emoji:'🥺',desc:'Cute chibi face',   warp:warpCute},
+  {id:'mew',     name:'Mewing',   emoji:'🫤',desc:'Sharp jawline',     warp:warpMewing},
 ];
 
-const S = {
-  activeFilter: 0,
-  intensity: 1.0,
-  facing: 'user',
-  stream: null,
-  lastFrame: null,
-  captureNext: false,
-  faceLandmarker: null,
-  animFrameId: null,
-  running: false,
-};
+const S={activeFilter:0,intensity:1.0,facing:'user',stream:null,lastFrame:null,captureNext:false,faceLandmarker:null,animId:null};
 
-const video  = document.getElementById('video');
-const canvas = document.getElementById('canvas');
-const ctx    = canvas.getContext('2d', { willReadFrequently: true });
-const ftag   = document.getElementById('ftag');
-const lmdot  = document.getElementById('lm-dot');
-const statusEl = document.getElementById('status');
+const video=document.getElementById('video');
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d',{willReadFrequently:true});
+const ftag=document.getElementById('ftag');
+const lmdot=document.getElementById('lm-dot');
+const statusEl=document.getElementById('status');
+const progWrap=document.getElementById('prog-wrap');
+const progBar=document.getElementById('prog-bar');
+const progPct=document.getElementById('prog-pct');
+const retryBtn=document.getElementById('retry-btn');
 
-// Expose boot() to global scope for onclick
-window.boot = boot;
-window.flip = flip;
-window.save = save;
-window.shoot = shoot;
-window.onInt = onInt;
+// Expose globals
+window.boot=boot; window.flip=flip; window.doSave=doSave;
+window.shoot=shoot; window.onInt=onInt; window.retryLoad=retryLoad;
 
-// ── BOOT ──────────────────────────────────────────────────────────────────
+let FaceLandmarkerClass=null, FilesetResolverClass=null;
+
 async function boot(){
   document.getElementById('perm').classList.add('gone');
-  buildStrip();
-  initSlider();
-  setStatus('🔄', 'Loading AI model…', 'Downloading FaceLandmarker WASM');
-
-  try {
-    await loadFaceLandmarker();
-  } catch(e) {
-    setStatus('❌', 'Model failed to load', e.message);
-    return;
-  }
-
+  buildStrip(); initSlider();
   await startCam();
+  await loadModel();
 }
 
-// ── MEDIAPIPE TASKS VISION (NEW API) ──────────────────────────────────────
-async function loadFaceLandmarker() {
-  const vision = await FilesetResolver.forVisionTasks(
-    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
-  );
-  S.faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
-    baseOptions: {
-      modelAssetPath:
-        "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
-      delegate: "GPU",
-    },
-    runningMode: "VIDEO",
-    numFaces: 1,
-  });
+async function retryLoad(){
+  retryBtn.style.display='none';
+  progWrap.style.display='none';
+  await loadModel();
+}
+
+// ── MODEL LOADING ─────────────────────────────────────────────────────────
+async function loadModel(){
+  setStatus('⏳','Downloading AI model…','First load ~25 MB — cached after that');
+  progWrap.style.display='block'; setProgress(0);
+
+  // Step 1: Load JS module
+  if(!FaceLandmarkerClass){
+    try {
+      startFakeProg(0,40,8000);
+      const mod = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs');
+      FaceLandmarkerClass=mod.FaceLandmarker;
+      FilesetResolverClass=mod.FilesetResolver;
+      stopFakeProg(40);
+    } catch(e){
+      showErr('JS module failed to load. Check network/CORS.\n'+e.message); return;
+    }
+  } else { stopFakeProg(40); }
+
+  // Step 2: Resolve WASM
+  let vision=null;
+  for(let i=0;i<WASM_CDNS.length;i++){
+    const cdn=WASM_CDNS[i];
+    try {
+      setStatusSub('Loading WASM ('+(i===0?'jsDelivr':'unpkg')+')…');
+      startFakeProg(40,70,5000);
+      vision=await FilesetResolverClass.forVisionTasks(cdn);
+      stopFakeProg(70); break;
+    } catch(e){ console.warn('WASM CDN failed:',cdn,e.message); }
+  }
+  if(!vision){ showErr('WASM failed on all CDNs. Try disabling VPN or reloading.'); return; }
+
+  // Step 3: Load model (try GPU then CPU)
+  setStatusSub('Loading face model…');
+  startFakeProg(70,98,15000);
+  for(const delegate of ['GPU','CPU']){
+    try {
+      S.faceLandmarker=await FaceLandmarkerClass.createFromOptions(vision,{
+        baseOptions:{modelAssetPath:MODEL_URL,delegate},
+        runningMode:'VIDEO',numFaces:1,
+      });
+      break;
+    } catch(e){ console.warn(delegate+' failed:',e.message); }
+  }
+  if(!S.faceLandmarker){ showErr('Face model failed to load. Try a different browser.'); return; }
+
+  stopFakeProg(100);
+  await sleep(250);
+  setStatus(null);
+  renderLoop();
+}
+
+// ── FAKE PROGRESS ─────────────────────────────────────────────────────────
+let fakeTimer=null, fakeVal=0;
+function startFakeProg(from,to,ms){
+  clearInterval(fakeTimer); fakeVal=from;
+  const step=(to-from)/(ms/100);
+  fakeTimer=setInterval(()=>{
+    fakeVal=Math.min(fakeVal+step,to);
+    setProgress(fakeVal);
+    if(fakeVal>=to) clearInterval(fakeTimer);
+  },100);
+}
+function stopFakeProg(val){ clearInterval(fakeTimer); setProgress(val); }
+function setProgress(p){
+  progBar.style.width=p.toFixed(0)+'%';
+  progPct.textContent=p.toFixed(0)+'%';
+}
+function showErr(msg){
+  clearInterval(fakeTimer);
+  setStatus('❌','Load failed',msg);
+  progWrap.style.display='none';
+  retryBtn.style.display='inline-block';
 }
 
 // ── CAMERA ────────────────────────────────────────────────────────────────
 async function startCam(){
   try {
     if(S.stream) S.stream.getTracks().forEach(t=>t.stop());
-    if(S.animFrameId) { cancelAnimationFrame(S.animFrameId); S.animFrameId=null; }
-
-    S.stream = await navigator.mediaDevices.getUserMedia({
-      video:{ facingMode: S.facing, width:{ideal:1280}, height:{ideal:720} },
-      audio: false
+    if(S.animId){cancelAnimationFrame(S.animId);S.animId=null;}
+    S.stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:S.facing,width:{ideal:1280},height:{ideal:720}},audio:false
     });
-    video.srcObject = S.stream;
+    video.srcObject=S.stream;
     await video.play();
     resize();
-    setStatus(null); // hide status
-    renderLoop();
+    // Show raw camera feed while model downloads
+    if(!S.faceLandmarker) rawLoop();
   } catch(e){
-    setStatus('❌', 'Camera denied', e.message);
+    setStatus('❌','Camera denied','Allow camera access and reload');
     document.getElementById('perm').classList.remove('gone');
   }
 }
 
-function setStatus(icon, txt, sub){
-  if(!icon){ statusEl.style.display='none'; return; }
-  statusEl.style.display='';
-  statusEl.querySelector('.status-icon').textContent = icon||'';
-  statusEl.querySelector('.status-txt').textContent  = txt||'';
-  statusEl.querySelector('.status-sub').textContent  = sub||'';
+function rawLoop(){
+  if(S.faceLandmarker) return;
+  if(video.readyState>=2){
+    const W=canvas.width,H=canvas.height;
+    ctx.save();ctx.scale(-1,1);ctx.drawImage(video,-W,0,W,H);ctx.restore();
+  }
+  S.animId=requestAnimationFrame(rawLoop);
 }
 
 function resize(){
-  const s = document.getElementById('stage');
-  canvas.width  = s.offsetWidth;
-  canvas.height = s.offsetHeight;
+  const s=document.getElementById('stage');
+  canvas.width=s.offsetWidth; canvas.height=s.offsetHeight;
 }
-window.addEventListener('resize', resize);
+window.addEventListener('resize',resize);
 
 // ── RENDER LOOP ───────────────────────────────────────────────────────────
-let lastVideoTime = -1;
-
+let lastVT=-1;
 function renderLoop(){
-  if(!S.faceLandmarker || video.readyState < 2){
-    S.animFrameId = requestAnimationFrame(renderLoop);
-    return;
+  const W=canvas.width,H=canvas.height;
+  let results=null;
+  if(video.readyState>=2 && video.currentTime!==lastVT){
+    lastVT=video.currentTime;
+    try{ results=S.faceLandmarker.detectForVideo(video,performance.now()); }catch(e){}
   }
-
-  const W = canvas.width, H = canvas.height;
-
-  // Only run detection when a new video frame arrives
-  let results = null;
-  if(video.currentTime !== lastVideoTime){
-    lastVideoTime = video.currentTime;
-    try {
-      results = S.faceLandmarker.detectForVideo(video, performance.now());
-    } catch(e){ /* ignore occasional errors */ }
-  }
-
-  // Draw mirrored video frame
-  ctx.save();
-  ctx.scale(-1, 1);
-  ctx.drawImage(video, -W, 0, W, H);
-  ctx.restore();
-
-  if(results && results.faceLandmarks && results.faceLandmarks.length > 0){
+  ctx.save();ctx.scale(-1,1);ctx.drawImage(video,-W,0,W,H);ctx.restore();
+  if(results?.faceLandmarks?.length){
     lmdot.classList.remove('inactive');
-    const lm = results.faceLandmarks[0];
-
-    const filter = FILTERS[S.activeFilter];
-    if(filter.warp){
-      applyWarp(ctx, video, lm, W, H, filter.warp, S.intensity);
-    }
-  } else {
-    if(results) lmdot.classList.add('inactive');
-  }
-
-  // Only capture when shutter was pressed
-  if(S.captureNext){
-    S.lastFrame = canvas.toDataURL('image/jpeg', 0.92);
-    S.captureNext = false;
-  }
-
-  S.animFrameId = requestAnimationFrame(renderLoop);
+    const lm=results.faceLandmarks[0];
+    const f=FILTERS[S.activeFilter];
+    if(f.warp) applyWarp(ctx,video,lm,W,H,f.warp,S.intensity);
+  } else if(results){ lmdot.classList.add('inactive'); }
+  if(S.captureNext){S.lastFrame=canvas.toDataURL('image/jpeg',0.92);S.captureNext=false;}
+  S.animId=requestAnimationFrame(renderLoop);
 }
 
 // ── WARP ENGINE ───────────────────────────────────────────────────────────
-function applyWarp(ctx, img, lm, W, H, warpFn, intensity){
-  const commands = warpFn(lm, W, H, intensity);
-
-  const tmp = document.createElement('canvas');
-  tmp.width=W; tmp.height=H;
-  const tc = tmp.getContext('2d', { willReadFrequently: true });
-  tc.save(); tc.scale(-1,1); tc.drawImage(img,-W,0,W,H); tc.restore();
-
-  const out = document.createElement('canvas');
-  out.width=W; out.height=H;
-  const oc = out.getContext('2d', { willReadFrequently: true });
+function applyWarp(ctx,img,lm,W,H,warpFn,intensity){
+  const cmds=warpFn(lm,W,H,intensity);
+  const tmp=document.createElement('canvas');tmp.width=W;tmp.height=H;
+  const tc=tmp.getContext('2d',{willReadFrequently:true});
+  tc.save();tc.scale(-1,1);tc.drawImage(img,-W,0,W,H);tc.restore();
+  const out=document.createElement('canvas');out.width=W;out.height=H;
+  const oc=out.getContext('2d',{willReadFrequently:true});
   oc.drawImage(tmp,0,0);
-
-  const tmpCtx = tc; // reuse context reference
-  commands.forEach(cmd=>{
-    warpRegion(tmpCtx, oc, cmd.cx, cmd.cy, cmd.radius, cmd.strength, cmd.mode, W, H);
-  });
-
-  ctx.clearRect(0,0,W,H);
-  ctx.drawImage(out,0,0);
+  cmds.forEach(c=>warpRegion(tc,oc,c.cx,c.cy,c.radius,c.strength,c.mode,W,H));
+  ctx.clearRect(0,0,W,H);ctx.drawImage(out,0,0);
 }
 
-function warpRegion(srcCtx, dstCtx, cx, cy, radius, strength, mode, cW, cH){
-  const r = Math.round(radius);
-  if(r < 2) return;
-  const sx = Math.max(0, Math.round(cx-r));
-  const sy = Math.max(0, Math.round(cy-r));
-  const sw = Math.min(r*2, cW-sx);
-  const sh = Math.min(r*2, cH-sy);
-  if(sw<=0||sh<=0) return;
-
-  const src_id = srcCtx.getImageData(sx,sy,sw,sh);
-  const dst_id = dstCtx.getImageData(sx,sy,sw,sh);
-  const sd=src_id.data, dd=dst_id.data;
-
-  for(let py=0;py<sh;py++){
-    for(let px=0;px<sw;px++){
-      const dx=(px-(sw/2))/(sw/2), dy=(py-(sh/2))/(sh/2);
-      const dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist>1) continue;
-
-      const falloff = Math.cos(dist*Math.PI*0.5);
-      let sx2, sy2;
-
-      if(mode==='bulge'){
-        const factor = 1 + strength*falloff;
-        sx2 = (sw/2) + dx*sw/2/factor;
-        sy2 = (sh/2) + dy*sh/2/factor;
-      } else if(mode==='shrink'){
-        const factor = 1 - strength*0.6*falloff;
-        sx2 = (sw/2) + dx*sw/2*factor;
-        sy2 = (sh/2) + dy*sh/2*factor;
-      } else if(mode==='stretch_x'){
-        sx2 = (sw/2) + dx*sw/2*(1+strength*falloff);
-        sy2 = (sh/2) + dy*sh/2*(1-strength*0.3*falloff);
-      } else if(mode==='stretch_y'){
-        sx2 = (sw/2) + dx*sw/2*(1-strength*0.3*falloff);
-        sy2 = (sh/2) + dy*sh/2*(1+strength*falloff);
-      } else if(mode==='squish_x'){
-        sx2 = (sw/2) + dx*sw/2*(1-strength*0.7*falloff);
-        sy2 = (sh/2) + dy*sh/2*(1+strength*0.2*falloff);
-      } else if(mode==='squish_y'){
-        sx2 = (sw/2) + dx*sw/2*(1+strength*0.2*falloff);
-        sy2 = (sh/2) + dy*sh/2*(1-strength*0.7*falloff);
-      } else {
-        sx2=px; sy2=py;
-      }
-
-      sx2=Math.max(0,Math.min(sw-1,sx2));
-      sy2=Math.max(0,Math.min(sh-1,sy2));
-      const x0=Math.floor(sx2), y0=Math.floor(sy2);
-      const xf=sx2-x0, yf=sy2-y0;
-      const x1=Math.min(sw-1,x0+1), y1=Math.min(sh-1,y0+1);
-
-      const di=(py*sw+px)*4;
-      for(let c=0;c<4;c++){
-        const p00=sd[(y0*sw+x0)*4+c], p10=sd[(y0*sw+x1)*4+c];
-        const p01=sd[(y1*sw+x0)*4+c], p11=sd[(y1*sw+x1)*4+c];
-        dd[di+c]=p00*(1-xf)*(1-yf)+p10*xf*(1-yf)+p01*(1-xf)*yf+p11*xf*yf;
-      }
+function warpRegion(srcCtx,dstCtx,cx,cy,radius,strength,mode,cW,cH){
+  const r=Math.round(radius); if(r<2)return;
+  const sx=Math.max(0,Math.round(cx-r)),sy=Math.max(0,Math.round(cy-r));
+  const sw=Math.min(r*2,cW-sx),sh=Math.min(r*2,cH-sy);
+  if(sw<=0||sh<=0)return;
+  const si=srcCtx.getImageData(sx,sy,sw,sh),di=dstCtx.getImageData(sx,sy,sw,sh);
+  const sd=si.data,dd=di.data;
+  for(let py=0;py<sh;py++){for(let px=0;px<sw;px++){
+    const dx=(px-sw/2)/(sw/2),dy=(py-sh/2)/(sh/2);
+    const d=Math.sqrt(dx*dx+dy*dy); if(d>1)continue;
+    const fo=Math.cos(d*Math.PI*0.5);
+    let x2,y2;
+    if(mode==='bulge'){const f=1+strength*fo;x2=sw/2+dx*sw/2/f;y2=sh/2+dy*sh/2/f;}
+    else if(mode==='shrink'){const f=1-strength*0.6*fo;x2=sw/2+dx*sw/2*f;y2=sh/2+dy*sh/2*f;}
+    else if(mode==='stretch_x'){x2=sw/2+dx*sw/2*(1+strength*fo);y2=sh/2+dy*sh/2*(1-strength*0.3*fo);}
+    else if(mode==='stretch_y'){x2=sw/2+dx*sw/2*(1-strength*0.3*fo);y2=sh/2+dy*sh/2*(1+strength*fo);}
+    else if(mode==='squish_x'){x2=sw/2+dx*sw/2*(1-strength*0.7*fo);y2=sh/2+dy*sh/2*(1+strength*0.2*fo);}
+    else if(mode==='squish_y'){x2=sw/2+dx*sw/2*(1+strength*0.2*fo);y2=sh/2+dy*sh/2*(1-strength*0.7*fo);}
+    else{x2=px;y2=py;}
+    x2=Math.max(0,Math.min(sw-1,x2));y2=Math.max(0,Math.min(sh-1,y2));
+    const x0=Math.floor(x2),y0=Math.floor(y2),xf=x2-x0,yf=y2-y0;
+    const x1=Math.min(sw-1,x0+1),y1=Math.min(sh-1,y0+1);
+    const o=(py*sw+px)*4;
+    for(let c=0;c<4;c++){
+      const a=sd[(y0*sw+x0)*4+c],b=sd[(y0*sw+x1)*4+c];
+      const e=sd[(y1*sw+x0)*4+c],f=sd[(y1*sw+x1)*4+c];
+      dd[o+c]=a*(1-xf)*(1-yf)+b*xf*(1-yf)+e*(1-xf)*yf+f*xf*yf;
     }
-  }
-  dstCtx.putImageData(dst_id,sx,sy);
+  }}
+  dstCtx.putImageData(di,sx,sy);
 }
 
-// ── LANDMARK HELPERS ──────────────────────────────────────────────────────
-// NOTE: New API returns normalized [0..1] coords same as before
-function lpt(lm, i, W, H){ return {x:lm[i].x*W, y:lm[i].y*H}; }
-function lmid(lm, idxs, W, H){
-  let x=0,y=0;
-  idxs.forEach(i=>{x+=lm[i].x;y+=lm[i].y;});
-  return {x:x/idxs.length*W, y:y/idxs.length*H};
-}
-function lmdist(lm, i, j, W, H){
-  const a=lpt(lm,i,W,H),b=lpt(lm,j,W,H);
-  return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);
-}
+// ── LANDMARKS ─────────────────────────────────────────────────────────────
+function lpt(lm,i,W,H){return{x:lm[i].x*W,y:lm[i].y*H};}
+function lmid(lm,ids,W,H){let x=0,y=0;ids.forEach(i=>{x+=lm[i].x;y+=lm[i].y;});return{x:x/ids.length*W,y:y/ids.length*H};}
+function lmdist(lm,i,j,W,H){const a=lpt(lm,i,W,H),b=lpt(lm,j,W,H);return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);}
 
-// ── FILTER WARP FUNCTIONS ─────────────────────────────────────────────────
+// ── FILTERS ───────────────────────────────────────────────────────────────
 function warpBigEyes(lm,W,H,t){
-  const le=lmid(lm,[33,133,159,145],W,H);
-  const re=lmid(lm,[362,263,386,374],W,H);
-  const er=lmdist(lm,33,133,W,H)*1.3;
-  const s=t*0.7;
-  return [
-    {cx:le.x,cy:le.y,radius:er,strength:s,mode:'bulge'},
-    {cx:re.x,cy:re.y,radius:er,strength:s,mode:'bulge'},
-  ];
+  const le=lmid(lm,[33,133,159,145],W,H),re=lmid(lm,[362,263,386,374],W,H);
+  const er=lmdist(lm,33,133,W,H)*1.3,s=t*0.7;
+  return [{cx:le.x,cy:le.y,radius:er,strength:s,mode:'bulge'},{cx:re.x,cy:re.y,radius:er,strength:s,mode:'bulge'}];
 }
 function warpTinyEyes(lm,W,H,t){
-  const le=lmid(lm,[33,133,159,145],W,H);
-  const re=lmid(lm,[362,263,386,374],W,H);
-  const er=lmdist(lm,33,133,W,H)*1.1;
-  const s=t*0.55;
-  return [
-    {cx:le.x,cy:le.y,radius:er,strength:s,mode:'shrink'},
-    {cx:re.x,cy:re.y,radius:er,strength:s,mode:'shrink'},
-  ];
+  const le=lmid(lm,[33,133,159,145],W,H),re=lmid(lm,[362,263,386,374],W,H);
+  const er=lmdist(lm,33,133,W,H)*1.1,s=t*0.55;
+  return [{cx:le.x,cy:le.y,radius:er,strength:s,mode:'shrink'},{cx:re.x,cy:re.y,radius:er,strength:s,mode:'shrink'}];
 }
 function warpBigNose(lm,W,H,t){
-  const n=lmid(lm,[1,4,2,98,327],W,H);
-  const nr=lmdist(lm,129,358,W,H)*1.6;
+  const n=lmid(lm,[1,4,2,98,327],W,H),nr=lmdist(lm,129,358,W,H)*1.6;
   return [{cx:n.x,cy:n.y,radius:nr,strength:t*0.7,mode:'bulge'}];
 }
 function warpBigLips(lm,W,H,t){
-  const mc=lmid(lm,[0,17,61,291],W,H);
-  const mr=lmdist(lm,61,291,W,H)*1.0;
-  const s=t*0.65;
-  return [
-    {cx:mc.x,cy:mc.y-mr*0.1,radius:mr*1.1,strength:s,mode:'stretch_y'},
-    {cx:mc.x,cy:mc.y,radius:mr*1.2,strength:s*0.4,mode:'bulge'},
-  ];
+  const mc=lmid(lm,[0,17,61,291],W,H),mr=lmdist(lm,61,291,W,H),s=t*0.65;
+  return [{cx:mc.x,cy:mc.y-mr*0.1,radius:mr*1.1,strength:s,mode:'stretch_y'},{cx:mc.x,cy:mc.y,radius:mr*1.2,strength:s*0.4,mode:'bulge'}];
 }
 function warpFatFace(lm,W,H,t){
-  const lc=lmid(lm,[234,127,162],W,H);
-  const rc=lmid(lm,[454,356,389],W,H);
-  const cr=lmdist(lm,234,454,W,H)*0.35;
-  const s=t*0.55;
-  return [
-    {cx:lc.x,cy:lc.y,radius:cr,strength:s,mode:'stretch_x'},
-    {cx:rc.x,cy:rc.y,radius:cr,strength:s,mode:'stretch_x'},
-    {cx:(lc.x+rc.x)/2,cy:lc.y,radius:cr*2.5,strength:s*0.3,mode:'stretch_x'},
-  ];
+  const lc=lmid(lm,[234,127,162],W,H),rc=lmid(lm,[454,356,389],W,H);
+  const cr=lmdist(lm,234,454,W,H)*0.35,s=t*0.55;
+  return [{cx:lc.x,cy:lc.y,radius:cr,strength:s,mode:'stretch_x'},{cx:rc.x,cy:rc.y,radius:cr,strength:s,mode:'stretch_x'},{cx:(lc.x+rc.x)/2,cy:lc.y,radius:cr*2.5,strength:s*0.3,mode:'stretch_x'}];
 }
 function warpSkull(lm,W,H,t){
-  const top=lmid(lm,[10,67,109],W,H);
-  const chin=lmid(lm,[152,175],W,H);
-  const fr=lmdist(lm,10,234,W,H)*0.6;
-  const cr=lmdist(lm,152,234,W,H)*0.5;
-  const s=t*0.6;
-  return [
-    {cx:top.x,cy:top.y,radius:fr,strength:s,mode:'stretch_y'},
-    {cx:chin.x,cy:chin.y,radius:cr,strength:s*0.8,mode:'squish_y'},
-  ];
+  const top=lmid(lm,[10,67,109],W,H),chin=lmid(lm,[152,175],W,H);
+  const fr=lmdist(lm,10,234,W,H)*0.6,cr=lmdist(lm,152,234,W,H)*0.5,s=t*0.6;
+  return [{cx:top.x,cy:top.y,radius:fr,strength:s,mode:'stretch_y'},{cx:chin.x,cy:chin.y,radius:cr,strength:s*0.8,mode:'squish_y'}];
 }
 function warpAlien(lm,W,H,t){
-  const top=lmid(lm,[10,67,109,338,297],W,H);
-  const chin=lmid(lm,[152,175],W,H);
-  const le=lmid(lm,[33,133,159,145],W,H);
-  const re=lmid(lm,[362,263,386,374],W,H);
-  const er=lmdist(lm,33,133,W,H)*1.4;
-  const fr=lmdist(lm,10,234,W,H)*0.8;
-  const s=t*0.6;
-  return [
-    {cx:top.x,cy:top.y,radius:fr,strength:s*0.8,mode:'stretch_y'},
-    {cx:top.x,cy:top.y,radius:fr*0.7,strength:s*0.5,mode:'bulge'},
-    {cx:le.x,cy:le.y,radius:er*1.1,strength:s*0.8,mode:'bulge'},
-    {cx:re.x,cy:re.y,radius:er*1.1,strength:s*0.8,mode:'bulge'},
-    {cx:chin.x,cy:chin.y,radius:er,strength:s*0.7,mode:'squish_y'},
-  ];
+  const top=lmid(lm,[10,67,109,338,297],W,H),chin=lmid(lm,[152,175],W,H);
+  const le=lmid(lm,[33,133,159,145],W,H),re=lmid(lm,[362,263,386,374],W,H);
+  const er=lmdist(lm,33,133,W,H)*1.4,fr=lmdist(lm,10,234,W,H)*0.8,s=t*0.6;
+  return [{cx:top.x,cy:top.y,radius:fr,strength:s*0.8,mode:'stretch_y'},{cx:top.x,cy:top.y,radius:fr*0.7,strength:s*0.5,mode:'bulge'},{cx:le.x,cy:le.y,radius:er*1.1,strength:s*0.8,mode:'bulge'},{cx:re.x,cy:re.y,radius:er*1.1,strength:s*0.8,mode:'bulge'},{cx:chin.x,cy:chin.y,radius:er,strength:s*0.7,mode:'squish_y'}];
 }
 function warpMonkey(lm,W,H,t){
-  const n=lmid(lm,[1,4,2],W,H);
-  const mc=lmid(lm,[0,17],W,H);
-  const nr=lmdist(lm,129,358,W,H)*2.0;
-  const mr=lmdist(lm,61,291,W,H)*1.2;
-  const s=t*0.6;
-  return [
-    {cx:n.x,cy:n.y,radius:nr,strength:s*0.8,mode:'bulge'},
-    {cx:mc.x,cy:mc.y,radius:mr,strength:s*0.6,mode:'stretch_y'},
-    {cx:n.x,cy:n.y-nr,radius:nr*0.8,strength:s*0.3,mode:'shrink'},
-    {cx:lmid(lm,[234],W,H).x,cy:lmid(lm,[234],W,H).y,radius:nr*0.8,strength:s*0.5,mode:'stretch_x'},
-    {cx:lmid(lm,[454],W,H).x,cy:lmid(lm,[454],W,H).y,radius:nr*0.8,strength:s*0.5,mode:'stretch_x'},
-  ];
+  const n=lmid(lm,[1,4,2],W,H),mc=lmid(lm,[0,17],W,H);
+  const nr=lmdist(lm,129,358,W,H)*2.0,mr=lmdist(lm,61,291,W,H)*1.2,s=t*0.6;
+  return [{cx:n.x,cy:n.y,radius:nr,strength:s*0.8,mode:'bulge'},{cx:mc.x,cy:mc.y,radius:mr,strength:s*0.6,mode:'stretch_y'},{cx:n.x,cy:n.y-nr,radius:nr*0.8,strength:s*0.3,mode:'shrink'},{cx:lmid(lm,[234],W,H).x,cy:lmid(lm,[234],W,H).y,radius:nr*0.8,strength:s*0.5,mode:'stretch_x'},{cx:lmid(lm,[454],W,H).x,cy:lmid(lm,[454],W,H).y,radius:nr*0.8,strength:s*0.5,mode:'stretch_x'}];
 }
 function warpAngry(lm,W,H,t){
-  const le=lmid(lm,[33,133,159,145],W,H);
-  const re=lmid(lm,[362,263,386,374],W,H);
-  const n=lmid(lm,[1,4],W,H);
-  const er=lmdist(lm,33,133,W,H)*1.0;
-  const nr=lmdist(lm,129,358,W,H)*1.2;
-  const s=t*0.55;
-  return [
-    {cx:le.x+er*0.3,cy:le.y-er*0.2,radius:er*1.1,strength:s*0.5,mode:'bulge'},
-    {cx:re.x-er*0.3,cy:re.y-er*0.2,radius:er*1.1,strength:s*0.5,mode:'bulge'},
-    {cx:n.x,cy:n.y,radius:nr*1.5,strength:s*0.4,mode:'bulge'},
-    {cx:(le.x+re.x)/2,cy:(le.y+re.y)/2-er,radius:er*2,strength:s*0.35,mode:'squish_y'},
-  ];
+  const le=lmid(lm,[33,133,159,145],W,H),re=lmid(lm,[362,263,386,374],W,H),n=lmid(lm,[1,4],W,H);
+  const er=lmdist(lm,33,133,W,H),nr=lmdist(lm,129,358,W,H)*1.2,s=t*0.55;
+  return [{cx:le.x+er*0.3,cy:le.y-er*0.2,radius:er*1.1,strength:s*0.5,mode:'bulge'},{cx:re.x-er*0.3,cy:re.y-er*0.2,radius:er*1.1,strength:s*0.5,mode:'bulge'},{cx:n.x,cy:n.y,radius:nr*1.5,strength:s*0.4,mode:'bulge'},{cx:(le.x+re.x)/2,cy:(le.y+re.y)/2-er,radius:er*2,strength:s*0.35,mode:'squish_y'}];
 }
 function warpCute(lm,W,H,t){
-  const le=lmid(lm,[33,133,159,145],W,H);
-  const re=lmid(lm,[362,263,386,374],W,H);
-  const mc=lmid(lm,[0,61,291],W,H);
-  const er=lmdist(lm,33,133,W,H)*1.3;
-  const mr=lmdist(lm,61,291,W,H)*0.7;
-  const s=t*0.55;
-  return [
-    {cx:le.x,cy:le.y,radius:er,strength:s*0.7,mode:'bulge'},
-    {cx:re.x,cy:re.y,radius:er,strength:s*0.7,mode:'bulge'},
-    {cx:mc.x,cy:mc.y,radius:mr,strength:s*0.5,mode:'shrink'},
-    {cx:lmid(lm,[10],W,H).x,cy:lmid(lm,[10],W,H).y,radius:er*2,strength:s*0.4,mode:'squish_y'},
-  ];
+  const le=lmid(lm,[33,133,159,145],W,H),re=lmid(lm,[362,263,386,374],W,H),mc=lmid(lm,[0,61,291],W,H);
+  const er=lmdist(lm,33,133,W,H)*1.3,mr=lmdist(lm,61,291,W,H)*0.7,s=t*0.55;
+  return [{cx:le.x,cy:le.y,radius:er,strength:s*0.7,mode:'bulge'},{cx:re.x,cy:re.y,radius:er,strength:s*0.7,mode:'bulge'},{cx:mc.x,cy:mc.y,radius:mr,strength:s*0.5,mode:'shrink'},{cx:lmid(lm,[10],W,H).x,cy:lmid(lm,[10],W,H).y,radius:er*2,strength:s*0.4,mode:'squish_y'}];
 }
 function warpMewing(lm,W,H,t){
-  const lj=lmid(lm,[234,132,172],W,H);
-  const rj=lmid(lm,[454,361,397],W,H);
-  const chin=lmid(lm,[152,175,148],W,H);
-  const lc=lmid(lm,[117,118,101],W,H);
-  const rc=lmid(lm,[346,347,330],W,H);
-  const jr=lmdist(lm,234,454,W,H)*0.3;
-  const s=t*0.5;
-  return [
-    {cx:lj.x,cy:lj.y,radius:jr,strength:s*0.6,mode:'squish_x'},
-    {cx:rj.x,cy:rj.y,radius:jr,strength:s*0.6,mode:'squish_x'},
-    {cx:chin.x,cy:chin.y,radius:jr*1.2,strength:s*0.5,mode:'squish_y'},
-    {cx:lc.x,cy:lc.y,radius:jr*1.2,strength:s*0.4,mode:'bulge'},
-    {cx:rc.x,cy:rc.y,radius:jr*1.2,strength:s*0.4,mode:'bulge'},
-  ];
+  const lj=lmid(lm,[234,132,172],W,H),rj=lmid(lm,[454,361,397],W,H),chin=lmid(lm,[152,175,148],W,H);
+  const lc=lmid(lm,[117,118,101],W,H),rc=lmid(lm,[346,347,330],W,H);
+  const jr=lmdist(lm,234,454,W,H)*0.3,s=t*0.5;
+  return [{cx:lj.x,cy:lj.y,radius:jr,strength:s*0.6,mode:'squish_x'},{cx:rj.x,cy:rj.y,radius:jr,strength:s*0.6,mode:'squish_x'},{cx:chin.x,cy:chin.y,radius:jr*1.2,strength:s*0.5,mode:'squish_y'},{cx:lc.x,cy:lc.y,radius:jr*1.2,strength:s*0.4,mode:'bulge'},{cx:rc.x,cy:rc.y,radius:jr*1.2,strength:s*0.4,mode:'bulge'}];
 }
 
 // ── UI ────────────────────────────────────────────────────────────────────
@@ -598,71 +471,54 @@ function buildStrip(){
   const strip=document.getElementById('fstrip');
   FILTERS.forEach((f,i)=>{
     const card=document.createElement('div');
-    card.className='fcard'+(i===S.activeFilter?' active':'');
+    card.className='fcard'+(i===0?' active':'');
     card.innerHTML=`<div class="fface">${f.emoji}</div><div class="fname">${f.name}</div>`;
-    card.onclick=()=>selectFilter(i,f,card);
+    card.onclick=()=>{
+      S.activeFilter=i;
+      document.querySelectorAll('.fcard').forEach(c=>c.classList.remove('active'));
+      card.classList.add('active');
+      ftag.textContent=f.name+(f.id==='none'?'':' · '+f.desc);
+    };
     strip.appendChild(card);
   });
-  updateTag();
+  ftag.textContent='Select a filter';
 }
-
-function selectFilter(i,f,card){
-  S.activeFilter=i;
-  document.querySelectorAll('.fcard').forEach(c=>c.classList.remove('active'));
-  card.classList.add('active');
-  updateTag();
-}
-
-function updateTag(){
-  const f=FILTERS[S.activeFilter];
-  ftag.textContent=f.name+(f.id==='none'?'':' · '+f.desc);
-}
-
-function initSlider(){
-  const sl=document.getElementById('intslider');
-  sl.style.setProperty('--pct','70%');
-}
-
+function initSlider(){document.getElementById('intslider').style.setProperty('--pct','70%');}
 function onInt(el){
-  const v=parseInt(el.value);
-  S.intensity=v/100;
-  el.style.setProperty('--pct',((v-10)/(200-10)*100)+'%');
+  const v=parseInt(el.value);S.intensity=v/100;
+  el.style.setProperty('--pct',((v-10)/190*100)+'%');
   document.getElementById('intval').textContent=v;
 }
-
-async function flip(){
-  S.facing=S.facing==='user'?'environment':'user';
-  await startCam();
-}
-
+async function flip(){S.facing=S.facing==='user'?'environment':'user';await startCam();}
 function shoot(){
-  const f=document.getElementById('flash');
-  f.classList.add('go'); setTimeout(()=>f.classList.remove('go'),600);
-  S.captureNext=true;
-  toast('📸 Tap Save to download');
+  document.getElementById('flash').classList.add('go');
+  setTimeout(()=>document.getElementById('flash').classList.remove('go'),600);
+  S.captureNext=true;toast('📸 Tap Save to download');
 }
-
-function save(){
-  if(!S.lastFrame){ shoot(); return; }
+function doSave(){
+  if(!S.lastFrame){shoot();return;}
   const a=document.createElement('a');
-  a.href=S.lastFrame;
-  a.download=`funnyface_${FILTERS[S.activeFilter].id}_${Date.now()}.jpg`;
-  a.click();
-  toast('💾 Saved!');
+  a.href=S.lastFrame;a.download=`funnyface_${FILTERS[S.activeFilter].id}_${Date.now()}.jpg`;
+  a.click();toast('💾 Saved!');
 }
-
 function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2200);
 }
+function setStatus(icon,txt,sub){
+  if(!icon){statusEl.style.display='none';return;}
+  statusEl.style.display='';
+  statusEl.querySelector('.status-icon').textContent=icon;
+  statusEl.querySelector('.status-txt').textContent=txt||'';
+  setStatusSub(sub||'');
+}
+function setStatusSub(s){statusEl.querySelector('.status-sub').textContent=s;}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
-// Try auto-start if permissions already granted
+// Auto-boot if camera already permitted
 navigator.mediaDevices?.getUserMedia({video:true}).then(s=>{
-  s.getTracks().forEach(t=>t.stop());
-  boot();
+  s.getTracks().forEach(t=>t.stop());boot();
 }).catch(()=>{});
-
 </script>
 </body>
 </html>
