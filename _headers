@@ -6,10 +6,4 @@
   Permissions-Policy: geolocation=(), microphone=(), camera=()
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: require-corp
-  Content-Security-Policy: default-src 'self'; \
-    script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com; \
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; \
-    font-src 'self' https://fonts.gstatic.com; \
-    img-src 'self' data: https://raw.githubusercontent.com https://user-images.githubusercontent.com; \
-    connect-src 'self' https://api.example.com https://*.algolia.net https://www.google-analytics.com; \
-    frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://raw.githubusercontent.com https://user-images.githubusercontent.com; connect-src 'self' https://api.example.com https://*.algolia.net https://www.google-analytics.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
